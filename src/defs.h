@@ -12,6 +12,7 @@ using namespace glm;
 
 void Curvas_keypress(unsigned char key, int x, int y);
 void Curvas_draw();
+void Curvas_start();
 
 
 #endif

@@ -163,6 +163,10 @@ int main(int argc, char ** argv)
     glEnable(GL_LINE_SMOOTH);
 
     updateCamera();
+
+    Curvas_start();
+
+
     glutMainLoop();
 
     return 0;
