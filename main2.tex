@@ -1,19 +1,35 @@
-\documentclass{article}
+\documentclass[11pt,letterpaper,twocolumn]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[portuges]{babel}
-\usepackage{csquotes}
-\usepackage{geometry}
-\usepackage[pdftex]{hyperref}
-\usepackage{indentfirst}
-\usepackage{amsthm}
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage{mathrsfs}
-\usepackage{graphicx}
+\usepackage[portuguese]{babel}
 \usepackage{float}
-\usepackage{multicol}
+\usepackage{xcolor}
 \usepackage{verbatim}
-\usepackage{dsfont}
+\usepackage{charter}
+\usepackage{amsmath}
+\usepackage{appendix}
+\usepackage{ragged2e}
+\usepackage{array}
+\usepackage{etoolbox}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{arydshln}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage[bottom=3 cm,top=2.0cm,left=2.0cm,right=2.0cm]{geometry}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{subfiles}
+\usepackage[compact]{titlesec}
+\usepackage{stfloats}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage[export]{adjustbox}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsthm}
 
 \newtheorem{theorem}{Teorema}
 \newtheorem{definition}{Definição}
@@ -21,22 +37,71 @@
 \newtheorem{example}{Exemplo}
 \newtheorem{proposition}{Proposição}
 
-\geometry{left = 3cm, top = 3cm, bottom = 2cm, right = 2cm}
+\setlength{\columnsep}{30pt}
 
-\title{Teorema Fundamental das Curvas Espaciais}
-\author{Cristhian Grundmann \\ Igor Patrício Michels}
-\date{\today}
+%\titlelabel{\thetitle.\quad}
 
+\pagestyle{fancy}
+\fancyhf{}
+      
+\fancyfoot{}
+\fancyfoot[C]{\thepage} % page
+\renewcommand{\headrulewidth}{0mm} % headrule width
+\renewcommand{\footrulewidth}{0mm} % footrule width
+
+\makeatletter
+\patchcmd{\headrule}{\hrule}{\color{black}\hrule}{}{} % headrule
+\patchcmd{\footrule}{\hrule}{\color{black}\hrule}{}{} % footrule
+\makeatother
+
+\definecolor{blueM}{cmyk}{1.0,0.49,0.0,0.47}
+    
 \begin{document}
+\twocolumn[\begin{@twocolumnfalse}
 
-\maketitle
+\begin{minipage}{\textwidth}
+\vspace{5mm}
+    \Large{\textbf{Teorema Fundamental das Curvas Espaciais}} 
+    \vspace{3mm}
+    
+    \large{\textbf{Cristhian Grundmann, Igor Patrício Michels}} 
+    \vspace{2mm}\newline
+
+    \fontsize{0.35cm}{0.5cm}\selectfont \textit{Escola de Matemática Aplicada, EMAp/FGV\newline 
+    Rio de Janeiro/RJ, Brasil}
+    \vspace{1mm} 
+    
+    \today
+\end{minipage}
+
+\small
+\vspace{11pt}
+\centerline{\rule{0.95\textwidth}{0.4pt}}
+
+\begin{center}
+    \begin{minipage}{0.9\textwidth}
+        \noindent \textbf{Resumo:} 
+        Esse trabalho tem como objetivo enunciar e demonstrar o Teorema Fundamental das Curvas Espaciais, mostrando que uma curva do $\mathbb{R}^3$ pode ser gerada de forma única através de sua curvatura e torção.
+        \vspace{4mm}
+        
+        \noindent \textbf{Palavras chave:} Sistema de EDO's, Curvas Espaciais, Curvatura, Torção.
+    \end{minipage}
+\end{center}
+
+\centerline{\rule{0.95\textwidth}{0.4pt}}
+
+\vspace{15pt}
+\end{@twocolumnfalse}]
+
 \section{Introdução}
+\justify
 
 No decorrer da primeira parte do semestre foram dadas diversas definições, além de terem sido provadas inúmeras relações, proposições, lemas e teoremas. Tendo em vista isso, nos propomos a provar um teorema não visto em sala, mas que é de extrema importância para o assunto abordado, o Teorema Fundamental das Curvas Espaciais. Tal teorema diz que, dado um intervalo $I =(a, b)\in \mathbb{R}$ e as funções $\kappa : I\to \mathbb{R}^*_+$ e $\tau : I\to \mathbb{R}$, as quais chamaremos de curvatura e torção, respectivamente, definem, a menos de movimentos rígidos, uma curva no espaço.
 
 Esse enunciado, embora simples, é de enorme curiosidade, uma vez que o mesmo não parece nada imediato. Dessa forma, como motivação desse trabalho, vamos buscar entender como uma curva pode ser definida, e construída, a partir de sua curvatura e torção. Algumas demonstrações podem ser vistas em \cite{cruz}-\cite{picado}. Nossa abordagem se dará de forma similar a utilizada por \cite{coda}.
 
 \section{Preliminares}
+\justify
 \label{preliminares}
 
 Primeiramente, é interessante trazer algumas definições de análise que irão nos auxiliar
@@ -113,6 +178,7 @@ Feito isso, podemos relembrar o Teorema de Existência e Unicidade de EDO's. Par
 As demais definições e proposições que serão utilizadas já foram trabalhadas em aula, dessa forma optamos por omitir as mesmas. Entretanto, vale lembrar que, assim como \cite{lima}, aqui uma aplicação será dita diferenciável se a mesma for de classe $C^\infty$.
 
 \section{Teorema Fundamental das Curvas Espaciais}
+\justify
 
 Tendo como base o ferramental apresentado na Seção \ref{preliminares}, podemos enunciar, e provar, o Teorema Fundamental das Curvas Espaciais.
 
