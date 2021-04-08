@@ -1,4 +1,4 @@
-#include "viewer.h"
+#include "defs.h"
 
 const float PI = 3.141592653589793238463;
 
@@ -50,34 +50,7 @@ void display()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glLineWidth(2);
-    glBegin(GL_LINES);
-
-    //X axis
-    glColor4f(1, 0, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(1, 0, 0);
-    glColor4f(0.5, 0, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(-1, 0, 0);
-
-    //Y axis
-    glColor4f(0, 1, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 1, 0);
-    glColor4f(0, 0.5, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, -1, 0);
-
-    //Z axis
-    glColor4f(0, 0, 1, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 1);
-    glColor4f(0, 0, 0.5, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, -1);
-
-    glEnd();
+    Curvas_draw();
 
     glutSwapBuffers();
 }
@@ -135,7 +108,7 @@ void keyUp(unsigned char key, int x, int y)
 
     switch(key)
     {
-        case 'm':
+        case '*':
             if(mouseLook)
             {
                 mouseLook = false;
@@ -154,6 +127,9 @@ void keyUp(unsigned char key, int x, int y)
         case '-':
             cameraSpeed /= 2.0f;
             if(cameraSpeed <= 1.0f) cameraSpeed = 1.0f;
+            break;
+        default:
+            Curvas_keypress(key, x, y);
             break;
     }
 }

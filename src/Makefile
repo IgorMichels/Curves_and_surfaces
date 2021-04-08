@@ -1,7 +1,13 @@
 .phony: all
 
-all: viewer.out
-	./viewer.out
+all: program.out
+	./program.out
 
-viewer.out: viewer.cpp viewer.h
-	g++ viewer.cpp -o viewer.out -O3 -lGL -lGLU -lglut -lm -lGLEW
+program.out: viewer.o app.o
+	g++ viewer.o app.o -o program.out -lGL -lGLU -lglut -lm
+
+app.o: app.cpp defs.h
+	g++ -c app.cpp -o app.o -O3
+
+viewer.o: viewer.cpp defs.h
+	g++ -c viewer.cpp -o viewer.o -O3

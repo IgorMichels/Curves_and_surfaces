@@ -1,5 +1,5 @@
-#ifndef VIEWER_H
-#define VIEWER_H
+#ifndef DEFS_H
+#define DEFS_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +9,9 @@
 #include <glm/glm.hpp>
 
 using namespace glm;
+
+void Curvas_keypress(unsigned char key, int x, int y);
+void Curvas_draw();
 
 
 #endif
