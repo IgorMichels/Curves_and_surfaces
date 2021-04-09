@@ -14,6 +14,8 @@
 \usepackage{multicol}
 \usepackage{verbatim}
 \usepackage{dsfont}
+\usepackage{pgfplots}
+\pgfplotsset{compat = 1.15}
 
 \newtheorem{theorem}{Teorema}
 \newtheorem{definition}{Definição}
@@ -117,6 +119,7 @@ As demais definições e proposições que serão utilizadas já foram trabalhad
 Tendo como base o ferramental apresentado na Seção \ref{preliminares}, podemos enunciar, e provar, o Teorema Fundamental das Curvas Espaciais.
 
 \begin{theorem}(Teorema Fundamental das Curvas Espaciais.)
+    \label{teorema_fundamental}
     Sejam $\kappa_0, \tau_0 : I\subseteq \mathbb{R}\to \mathbb{R}$ funções diferenciáveis, com $\kappa_0(t) > 0$. Então existe uma curva $\alpha : I\to \mathbb{R}^3$, parametrizada por comprimento de arco, de modo que $\kappa_\alpha(t) = \kappa_0(t)$ e $\tau_\alpha(t) = \tau_0(t)$.
     
     Além disso, se existe uma outra curva $\beta : I\to \mathbb{R}^3$ de modo que, para todo $t\in I$, seja válido que $\kappa_\beta(t) = \kappa_0(t)$ e $\tau_\beta(t) = \tau_0(t)$, então existe um movimento rígido positivo, $M : \mathbb{R}^3\to \mathbb{R}^3$, tal que $\alpha(t) = M(\beta(t))$.
@@ -161,14 +164,16 @@ Tendo como base o ferramental apresentado na Seção \ref{preliminares}, podemos
     
     \noindent de onde surge o seguinte sistema de EDO's:
     \begin{equation}
-        \begin{split}
-            \langle T(t), T(t)\rangle' & = 2\kappa(t) \langle T(t), N(t)\rangle \\
-            \langle T(t), N(t)\rangle' & = \kappa(t) \langle N(t), N(t)\rangle - \kappa(t) \langle T(t), T(t)\rangle + \tau(t) \langle T(t), B(t)\rangle \\
-            \langle T(t), B(t)\rangle' & = \kappa(t) \langle N(t), B(t)\rangle - \tau(t) \langle T(t), N(t)\rangle \\
-            \langle N(t), N(t)\rangle' & = - 2\kappa(t) \langle T(t), N(t)\rangle + 2\tau(t) \langle N(t), B(t)\rangle \\
-            \langle N(t), B(t)\rangle' & = \tau(t) \langle B(t), B(t)\rangle - \kappa(t) \langle T(t), B(t)\rangle - \tau(t) \langle N(t), N(t)\rangle \\
-            \langle B(t), B(t)\rangle' & = -2\tau(t) \langle N(t), B(t)\rangle.
-        \end{split}
+        \left\{
+            \begin{array}{rl}
+                \langle T(t), T(t)\rangle' & = 2\kappa(t) \langle T(t), N(t)\rangle \\
+                \langle T(t), N(t)\rangle' & = \kappa(t) \langle N(t), N(t)\rangle - \kappa(t) \langle T(t), T(t)\rangle + \tau(t) \langle T(t), B(t)\rangle \\
+                \langle T(t), B(t)\rangle' & = \kappa(t) \langle N(t), B(t)\rangle - \tau(t) \langle T(t), N(t)\rangle \\
+                \langle N(t), N(t)\rangle' & = - 2\kappa(t) \langle T(t), N(t)\rangle + 2\tau(t) \langle N(t), B(t)\rangle \\
+                \langle N(t), B(t)\rangle' & = \tau(t) \langle B(t), B(t)\rangle - \kappa(t) \langle T(t), B(t)\rangle - \tau(t) \langle N(t), N(t)\rangle \\
+                \langle B(t), B(t)\rangle' & = -2\tau(t) \langle N(t), B(t)\rangle
+            \end{array}
+        \right.
         \label{sistema_escalares}
     \end{equation}
     
@@ -202,6 +207,145 @@ Tendo como base o ferramental apresentado na Seção \ref{preliminares}, podemos
     \noindent e $P : \mathbb{R}^3\to \mathbb{R}^3$, sendo definida como $P(v) = v - \beta(t_0)$, ou seja, $P$ será dada de modo que $P(\beta(t_0)) = \beta(t_0) - \beta(t_0) = (0, 0, 0)$, o que faz com que a curva $\beta$ respeite as condições iniciais dos nossos sistemas de EDO's, logo, novamente pela unicidade das soluções, vale que $\alpha = M(\beta)$.
 \end{proof}
 
+\section{Alguns exemplos de curvas}
+
+Podemos exemplificar o teorema através de alguns exemplos, isto é, iremos tomar uma função curvatura e uma função torção e encontrar a curva correspondente. Por simplicidade, e pela segunda parte do teorema, iremos considerar todos os sistemas com as mesmas condições iniciais da curva $\alpha$ no Teorema \ref{teorema_fundamental}, isto é, $T(t) = e_1$, $N(t) = e_2$ e $B(t) = e_3$. Além disso, também iremos considerar $t_0 = 0$.
+
+\begin{example}
+    \label{exemplo_1}
+    Seja $I = [0, 2\pi]$. Encontre a curva $\alpha : I\to \mathbb{R}^3$ de forma que $\kappa_\alpha(t) = \tau_\alpha(t) = 1, \forall t\in I$.
+\end{example}
+
+\noindent {\textbf{Solução:}} voltando a Equação \ref{frenet} podemos ver um sistema de EDO's com 9 equações, disfarçadas em 3 equações. Entretanto, podemos ver que as 9 equações formam, três a três, três sistemas de equações iguais a \ref{frenet}, mas referente a apenas uma coordenada de cada vetor. Tendo isso em vista, resolveremos o sistema para a primeira coordenada, as demais coordenadas terão soluções idênticas. Dessa forma temos o seguinte sistema de equações:
+\begin{equation*}
+    \left\{
+        \begin{array}{rl}
+            T_1'(t) & = N_1(t) \\
+            N_1'(t) & = - T_1(t) + B_1(t) \\
+            B_1'(t) & = - N_1(t)
+        \end{array}
+    \right.
+\end{equation*}
+
+Resolvendo o mesmo por meio do método da substituição, temos
+\[T_1'(t) = N_1(t)\implies T_1''(t) = N_1'(t) = - T_1(t) + B_1(t)\implies T_1'''(t) = - T_1'(t) + B_1'(t) = - T_1'(t) - N_1(t) = - 2T_1'(t),\]
+
+\noindent logo, podemos resolver a EDO $T_1'''(t) = - 2T_1'(t)$ e, por meio dela, encontrar as demais funções. Dessa forma, temos que, ao assumir que $T(t) = e^{\lambda t}$, podemos escrever
+\begin{equation*}
+    \begin{split}
+        T_1'''(t) & = - 2T_1'(t) \\
+        \lambda^3e^{\lambda t} & = - 2\lambda e^{\lambda t} \\
+        \lambda^3 & = - 2\lambda,
+    \end{split}
+\end{equation*}
+
+\noindent de onde sai que $\lambda = 0\lor \lambda = i\sqrt{2}\lor \lambda = -i\sqrt{2}$. Com isso, temos que a solução geral para $T_1(t)$ é
+\[T_1(t) = \dfrac{c_1 \sin{\sqrt{2}t}}{\sqrt{2}} + \dfrac{c_2 \cos{\sqrt{2}t}}{\sqrt{2}} + c_3.\]
+
+Sabemos que $N_1(t) = T_1'(t)$, dessa forma, vale que
+\[N_1(t) = c_1\cos{\sqrt{2}t} - c_2\sin{\sqrt{2}t}.\]
+
+Por fim, vale que $N_1'(t) = -T_1(t) + B_1(t)\implies B_1(t) = N_1'(t) + T_1(t)$, dessa forma, podemos ver que
+\[B_1(t) = c_1\sin{\sqrt{2}t}\left(\dfrac{1}{\sqrt{2}} - \sqrt{2}\right) + c_2\cos{\sqrt{2}t}\left(\dfrac{1}{\sqrt{2}} - \sqrt{2}\right) + c_3.\]
+
+Como dito anteriormente, podemos ver que até o momento não utilizamos que esse sistema está representando a primeira coordenada de cada um dos vetores. Ou seja, a expressão das demais coordenadas de cada vetor são dessa mesma forma, variando apenas pelas constantes $c_1$, $c_2$ e $c_3$, as quais são obtidas pelo valor inicial em $t_0$. Dessa forma, precisamos encontrar apenas os valores dessas constantes para cada uma das coordenadas.
+\begin{itemize}
+    \item Em $t_0$, para a 1ª coordenada de cada vetor, temos:
+        \begin{equation*}
+            \left\{
+                \begin{array}{rl}
+                    \dfrac{c_2}{\sqrt{2}} + c_3 & = 1 \\
+                    c_1 & = 0 \\
+                    c_2\left(\dfrac{1}{\sqrt{2}} - \sqrt{2}\right) + c_3 & = 0
+                \end{array}
+            \right.
+        \end{equation*}
+        
+        cuja solução é $c_1 = 0$, $c_2 = \frac{\sqrt{2}}{2}$ e $c_3 = \frac{1}{2}$, que nos dá as seguintes funções para a primeira coordenada:
+        \[T_1(t) = \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2},\]
+        \[N_1(t) = - \dfrac{\sqrt{2}\sin{\sqrt{2}t}}{2},\]
+        \[B_1(t) = - \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}.\]
+        
+    \item Em $t_0$, para a 2ª coordenada de cada vetor, temos:
+        \begin{equation*}
+            \left\{
+                \begin{array}{rl}
+                    \dfrac{c_2}{\sqrt{2}} + c_3 & = 0 \\
+                    c_1 & = 1 \\
+                    c_2\left(\dfrac{1}{\sqrt{2}} - \sqrt{2}\right) + c_3 & = 0
+                \end{array}
+            \right.
+        \end{equation*}
+        
+        cuja solução é $c_1 = 1$, $c_2 = 0$ e $c_3 = 0$, que nos dá as seguintes funções para a primeira coordenada:
+        \[T_2(t) = \dfrac{\sin{\sqrt{2}t}}{\sqrt{2}},\]
+        \[N_2(t) = \cos{\sqrt{2}t},\]
+        \[B_2(t) = -\dfrac{\sin{\sqrt{2}t}}{\sqrt{2}}.\]
+        
+    \item Em $t_0$, para a 3ª coordenada de cada vetor, temos:
+        \begin{equation*}
+            \left\{
+                \begin{array}{rl}
+                    \dfrac{c_2}{\sqrt{2}} + c_3 & = 0 \\
+                    c_1 & = 0 \\
+                    c_2\left(\dfrac{1}{\sqrt{2}} - \sqrt{2}\right) + c_3 & = 1
+                \end{array}
+            \right.
+        \end{equation*}
+        
+        cuja solução é $c_1 = 0$, $c_2 = -\frac{\sqrt{2}}{2}$ e $c_3 = \frac{1}{2}$, que nos dá as seguintes funções para a primeira coordenada:
+        \[T_3(t) = - \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2},\]
+        \[N_3(t) = \dfrac{\sqrt{2}\sin{\sqrt{2}t}}{2},\]
+        \[B_3(t) = \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}.\]
+\end{itemize}
+
+De onde obtemos os vetores
+\[T(t) = \left(\dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}, \dfrac{\sin{\sqrt{2}t}}{\sqrt{2}}, - \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}\right),\]
+\[N(t) = \left(- \dfrac{\sqrt{2}\sin{\sqrt{2}t}}{2}, \cos{\sqrt{2}t}, \dfrac{\sqrt{2}\sin{\sqrt{2}t}}{2}\right),\]
+\[B(t) = \left(- \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}, -\dfrac{\sin{\sqrt{2}t}}{\sqrt{2}}, \dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}\right).\]
+
+Agora, nossa curva $\alpha$ será definida por
+\[\alpha(t) = \int_{t_0}^{t} T(u) ~du.\]
+
+Fazendo a integração, coordenada a coordenada, temos, enfim, a curva procurada:
+\[\alpha(t) = \left(\dfrac{\sin{\sqrt{2}t}}{2\sqrt{2}} + \dfrac{t}{2}, -\dfrac{\cos{\sqrt{2}t}}{2} + \dfrac{1}{2}, -\dfrac{\sin{\sqrt{2}t}}{2\sqrt{2}} + \dfrac{t}{2}\right).\]
+
+Note que, conforme o esperado, essa curva representa uma hélice circular (possui curvatura constante e torção não nula):
+\begin{figure}[H]
+    \centering
+    \includegraphics{Tikz1.pdf}
+    \caption{Curva $\alpha$ com curvatura $\kappa_\alpha(t) = 1$ e torção $\tau_\alpha(t) = 1$, à esquerda com visualização geral e à direita ilustrando o círculo, caracterizado pela curvatura constante.}
+\end{figure}
+
+Um outro exemplo, um pouco mais divertido, traz uma curva cuja curvatura e torção não são constantes.
+
+\begin{example}
+    Encontrar a curva definida em $I = [0, 10]$ cuja curvatura é igual a $\kappa_\alpha(t) = t + 1$ e a torção é identificamente nula.
+\end{example}
+
+\noindent {\textbf{Solução:}} De modo análogo ao Exemplo \ref{exemplo_1}, precisaremos resolver um sistema de EDO's para encontrar a curva. Para essa curva, o sistema correspondente é o que pode ser visto em \ref{sistema_exemplo_2}.
+\begin{equation}
+    \label{sistema_exemplo_2}
+    \left\{
+        \begin{array}{rl}
+            T'(t) & = (t + 1)N(t) \\
+            N'(t) & = - (t + 1)T(t) + 0\cdot B(t) \\
+            B'(t) & = - 0\cdot N(t)
+        \end{array}
+    \right.
+\end{equation}
+
+A resolução do sistema é uma atividade mais mecânica e, como já desenvolvemos para o Exemplo \ref{exemplo_1}, optamos por omitir as contas. Como resultado teremos os seguintes vetores:
+\[T(t) = \left(\cos{\dfrac{1}{2}t(t + 2)}, \sin{\dfrac{1}{2}t(t + 2)}, 0\right),\]
+\[N(t) = \left(-\sin{\dfrac{1}{2}t(t + 2)}, \cos{\dfrac{1}{2}t(t + 2)}, 0\right),\]
+\[B(t) = \left(0, 0, 1\right).\]
+
+Consequentemente, nossa curva será dada por
+\[\alpha(t) = \left(\int_0^t \cos{\dfrac{1}{2}u(u + 2)} ~du, \int_0^t \sin{\dfrac{1}{2}u(u + 2)} ~du, 0\right).\]
+
+Note que essa é uma curva plana, resultado totalmente esperado pois, conforme visto em aula, uma curva com torção nula será plana.
+
+\section{Animações}
 
 
 
@@ -209,7 +353,10 @@ Tendo como base o ferramental apresentado na Seção \ref{preliminares}, podemos
 
 
 
-% \newpage
+\section{Conclusão}
+
+Nesse trabalho vimos o Teorema Fundamental das Curvas Espaciais, o qual nos diz que uma curva no espaço é definida por uma função curvatura positiva e por uma função torção. Além disso, vimos como podemos obter uma curva possuindo tais funções, com o intuito de ilustrar o teorema. Por fim, apresentamos um programa que calcula, iterativamente, tais curvas.
+
 \begin{thebibliography}{9}
 
 \bibitem{cruz} Cruz, J. (2017). The Fundamental Theorem of Space Curves. doi: \url{http://math.uchicago.edu/~may/REU2017/REUPapers/Cruz.pdf}.
