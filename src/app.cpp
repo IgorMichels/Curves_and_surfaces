@@ -8,15 +8,13 @@ bool grid = false;
 
 void Curvas_start(int argc, char **argv)
 {
-    alpha = CURVA(1, 1);
-    alpha.eulerBuild(-20, 20, 0.01);
 }
 
 void Curvas_update()
 {
-    alpha.setParameter(alpha.parameter + masterSpeed * deltaTime * (keys[']'] - keys['[']));
+    alpha.setParameter(alpha.parameter + masterSpeed * cameraSpeed * deltaTime * (keys[']'] - keys['[']));
 
-    if(!flyMode)
+    if(!flyMode && alpha.iFrenet >= 0)
     {
         cameraFront = alpha.pieces[alpha.iFrenet].tangent;
         cameraLeft = -alpha.pieces[alpha.iFrenet].binormal;
@@ -43,7 +41,8 @@ void Curvas_keypress(unsigned char key, int x, int y)
         case 'f':
             frenet = !frenet;
             break;
-        case 'r':
+        case '0':
+            alpha = CURVA(1, 0);
             Frenet cur = {cameraFront, -cameraUp, -cameraLeft, cameraPos};
             alpha.eulerBuild(-20, 20, 0.01, cur);
             break;

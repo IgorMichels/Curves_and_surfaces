@@ -68,9 +68,9 @@ void idle()
         (keys['a']- keys['d']) * cameraLeft);
 
     cameraPos += vel*masterSpeed*cameraSpeed*deltaTime;
-    updateCamera();
 
     Curvas_update();
+    updateCamera();
 
     glutPostRedisplay();
 }

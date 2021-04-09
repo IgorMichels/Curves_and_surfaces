@@ -23,7 +23,7 @@ struct Curva
     float a, b, h;
 
     float parameter;
-    int iFrenet;
+    int iFrenet = -1;
 
     bool setParameter(float t)
     {
@@ -39,7 +39,11 @@ struct Curva
     }
 
     Curva()
-    {}
+    {
+        curvature = nullptr;
+        torsion = nullptr;
+        iFrenet = -1;
+    }
 
     Curva(Func c, Func t)
     {
@@ -61,8 +65,9 @@ struct Curva
         eulerBuild(a, b, h, cur);
     }
 
-    bool eulerBuild(float a, float b, float h, Frenet& cur)
+    bool eulerBuild(float a, float b, float h, Frenet cur)
     {
+        if(!curvature || !torsion) return false;
         this->a = a;
         this->b = b;
         this->h = h;
@@ -100,7 +105,7 @@ struct Curva
         float c = 1;
         for(int i = 0; i < pieces.size()-1; i++)
         {
-            if(pieces[i].point.z < 0) c = 0.5; else c = 1; 
+            if(pieces[i].point.z <= 0) c = 0.5; else c = 1; 
             glColor4f((pieces[i].tangent.x+1)/2, (pieces[i].tangent.y+1)/2, (pieces[i].tangent.z+1)/2, c);
             glVertex3f(pieces[i].point.x, pieces[i].point.y, pieces[i].point.z);
             glColor4f((pieces[i+1].tangent.x+1)/2, (pieces[i+1].tangent.y+1)/2, (pieces[i+1].tangent.z+1)/2, c);
@@ -148,14 +153,8 @@ struct Curva
 
     void drawGrid()
     {
-        int f = iFrenet;
-        if(f < 0) return;
-
         float N = 20;
         float S = 1;
-
-        vec3 pos = pieces[f].point;
-        vec3 iPos = {((int)(pos.x/S))*S, ((int)(pos.y/S))*S, ((int)(pos.z/S))*S};
 
         glLineWidth(2);
         glBegin(GL_LINES);
@@ -164,10 +163,10 @@ struct Curva
             float c = 1-abs(k/(N+1));
             
             glColor4f(c, c, c, 0.5);
-            glVertex3f(iPos.x+k*S, iPos.y+N*S, 0);
-            glVertex3f(iPos.x+k*S, iPos.y-N*S, 0);
-            glVertex3f(iPos.x+N*S, iPos.y+k*S, 0);
-            glVertex3f(iPos.x-N*S, iPos.y+k*S, 0);
+            glVertex3f(+k*S, +N*S, 0);
+            glVertex3f(+k*S, -N*S, 0);
+            glVertex3f(+N*S, +k*S, 0);
+            glVertex3f(-N*S, +k*S, 0);
         }
 
         glEnd();
