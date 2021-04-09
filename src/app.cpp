@@ -33,6 +33,8 @@ void Curvas_draw()
 
 void Curvas_keypress(unsigned char key, int x, int y)
 {
+    Frenet cur = {cameraFront, -cameraUp, -cameraLeft, cameraPos};
+    if(!flyMode) if(alpha.iFrenet >= 0) cur = alpha.pieces[alpha.iFrenet];
     switch(key)
     {
         case 'g':
@@ -43,23 +45,31 @@ void Curvas_keypress(unsigned char key, int x, int y)
             break;
         case '0':
             alpha = CURVA(1, 0);
-            alpha.eulerBuild(-PI, PI+0.1, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            alpha.eulerBuild(-PI, PI+0.1, 0.01, cur);
             break;
         case '1':
             alpha = CURVA(1, 0.3);
-            alpha.eulerBuild(-4*PI, 4*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            alpha.eulerBuild(-4*PI, 4*PI, 0.01, cur);
             break;
         case '2':
             alpha = CURVA(t, t/10);
-            alpha.eulerBuild(-4*PI, 4*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            alpha.eulerBuild(-4*PI, 4*PI, 0.01, cur);
             break;
         case '3':
             alpha = CURVA(1, sin(t)/9);
-            alpha.eulerBuild(-8*PI, 8*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            alpha.eulerBuild(-8*PI, 8*PI, 0.01, cur);
             break;
         case '4':
             alpha = CURVA(sin(t), 0);
-            alpha.eulerBuild(-8*PI, 8*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            alpha.eulerBuild(-8*PI, 8*PI, 0.01, cur);
+            break;
+        case '5':
+            alpha = CURVA(1, t/abs(t+1));
+            alpha.eulerBuild(-8*PI, 8*PI, 0.01, cur);
+            break;
+        case '6':
+            alpha = CURVA(3*exp(-t*t/9)/2, 0);
+            alpha.eulerBuild(-4, 4, 0.01, cur);
             break;
     }
 }
