@@ -1,7 +1,5 @@
 #include "defs.h"
 
-const float PI = 3.141592653589793238463;
-
 int width = 800, height = 800;
 
 vec3 cameraPos = {-5, -1, -1};
@@ -10,7 +8,7 @@ vec3 cameraFront;
 vec3 cameraLeft;
 vec3 cameraUp;
 
-float time = 0.0f, deltaTime = 0.0f;
+float currentTime = 0.0f, deltaTime = 0.0f;
 float masterSpeed = 1.0f;
 float cameraSpeed = 1.0f;
 float mouseSpeed = 1.0f;
@@ -40,9 +38,9 @@ void display()
 {
     static float fps_time = 0;
     static int frames = 0;
-    if(time - fps_time > 1)
+    if(currentTime - fps_time > 1)
     {
-        fps_time = time;
+        fps_time = currentTime;
         printf("FPS: %d\n", frames);
         frames = 0;
     }
@@ -58,8 +56,8 @@ void display()
 void idle()
 {
     float newtime = (float)glutGet(GLUT_ELAPSED_TIME)/1000;
-    deltaTime = newtime - time;
-    time = newtime;
+    deltaTime = newtime - currentTime;
+    currentTime = newtime;
 
     vec3 vel = (
         (keys['w']- keys['s']) * cameraFront + 
@@ -67,6 +65,8 @@ void idle()
 
     cameraPos += vel*masterSpeed*cameraSpeed*deltaTime;
     updateCamera();
+
+    Curvas_update();
 
     glutPostRedisplay();
 }
@@ -78,7 +78,7 @@ void reshape(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
-    gluPerspective(120, aspect, 1, 10000);
+    gluPerspective(120, aspect, 0.01, 100);
     updateCamera();
     width = w;
     height = h;
@@ -134,7 +134,7 @@ void keyUp(unsigned char key, int x, int y)
     }
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
@@ -164,8 +164,7 @@ int main(int argc, char ** argv)
 
     updateCamera();
 
-    Curvas_start();
-
+    Curvas_start(argc, argv);
 
     glutMainLoop();
 
