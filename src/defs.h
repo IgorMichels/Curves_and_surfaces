@@ -10,58 +10,32 @@
 
 using namespace glm;
 
-const float PI = 3.141592653589793238463;
+const float PI = 3.14159265358979323846;
+const float E = 2.71828182845904523536;
 
-void Curvas_keypress(unsigned char key, int x, int y);
+void Curvas_keypress(unsigned char, int, int);
+void Curvas_mousewheel(int, int);
 void Curvas_draw();
 void Curvas_update();
 void Curvas_start(int, char **);
+void updateCamera();
 
-#define CURVA(x, y) Curva([](float t) { return (float)(x);}, [](float t) { return (float)(y);})
+extern int width, height;
 
-typedef float (*Func)(float);
+extern vec3 cameraPos;
+extern vec2 cameraAng;
+extern vec3 cameraFront;
+extern vec3 cameraLeft;
+extern vec3 cameraUp;
 
-struct Curva
-{
-    Func curvature, torsion;
+extern float currentTime; 
+extern float deltaTime;
+extern float masterSpeed;
+extern float cameraSpeed;
+extern float mouseSpeed;
 
-
-    float parameter;
-    vec3 tangent, normal, binormal, point;
-
-    void reset()
-    {
-        parameter = 0;
-        tangent = {1, 0, 0};
-        normal = {0, 1, 0};
-        binormal = {0, 0, 1};
-        point = {0, 0, 0};
-    }
-
-    Curva(Func c, Func t)
-    {
-        curvature = c;
-        torsion = t;
-        reset();
-    }
-
-    void eulerStep(float h)
-    {
-        float K = curvature(parameter);
-        float T = torsion(parameter);
-
-        vec3 nTangent = normalize(tangent + K*normal*h);
-        vec3 nNormal = normalize(normal + (T*binormal - K*tangent)*h);
-        vec3 nBinormal = cross(nTangent, nNormal);
-
-        parameter += h;
-        point += tangent*h;
-
-        tangent = nTangent;
-        normal = nNormal;
-        binormal = nBinormal;
-    }
-};
-
+extern bool flyMode;
+extern float keys[256];
+extern int nKeys;
 
 #endif

@@ -1,73 +1,56 @@
 #include "defs.h"
+#include "curvas.h"
 
-float delta = 0.1;
+Curva alpha;
+
+bool frenet = false;
+bool grid = false;
 
 void Curvas_start(int argc, char **argv)
 {
+    alpha = CURVA(1, 1);
+    alpha.eulerBuild(-20, 20, 0.01);
 }
 
 void Curvas_update()
 {
+    alpha.setParameter(alpha.parameter + masterSpeed * deltaTime * (keys[']'] - keys['[']));
 
+    if(!flyMode)
+    {
+        cameraFront = alpha.pieces[alpha.iFrenet].tangent;
+        cameraLeft = -alpha.pieces[alpha.iFrenet].binormal;
+        cameraUp = -alpha.pieces[alpha.iFrenet].normal;
+        cameraPos = alpha.pieces[alpha.iFrenet].point + cameraUp/5.0f + cameraLeft/10.0f - cameraFront/5.0f;
+        updateCamera();
+    }
 }
 
 void Curvas_draw()
 {
-
-    glLineWidth(2);
-    glBegin(GL_LINES);
-
-    //X axis
-    glColor4f(1, 0, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(1, 0, 0);
-    glColor4f(0.5, 0, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(-1, 0, 0);
-
-    //Y axis
-    glColor4f(0, 1, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 1, 0);
-    glColor4f(0, 0.5, 0, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, -1, 0);
-
-    //Z axis
-    glColor4f(0, 0, 1, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 1);
-    glColor4f(0, 0, 0.5, 1);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, -1);
-
-    glEnd();
-
-    static Curva c1 = CURVA(sin(t), 0);
-    c1.reset();
-    glLineWidth(2);
-    glBegin(GL_LINES);
-    while(c1.parameter < 100)
-    {
-        glColor4f((c1.tangent.x+1)/2, (c1.tangent.y+1)/2, (c1.tangent.z+1)/2, 1);
-        glVertex3f(c1.point.x, c1.point.y, c1.point.z);
-        c1.eulerStep(delta);
-        glColor4f((c1.tangent.x+1)/2, (c1.tangent.y+1)/2, (c1.tangent.z+1)/2, 1);
-        glVertex3f(c1.point.x, c1.point.y, c1.point.z);
-    }
-    glEnd();
+    if(grid) alpha.drawGrid();
+    if(frenet) alpha.drawFrenet();
+    alpha.drawCurve();
 }
 
 void Curvas_keypress(unsigned char key, int x, int y)
 {
     switch(key)
     {
-        case '1':
-            delta /= 2;
-            if(delta < 0.001) delta = 0.001;
+        case 'g':
+            grid = !grid;
             break;
-        case '2':
-            delta *= 2;
+        case 'f':
+            frenet = !frenet;
+            break;
+        case 'r':
+            Frenet cur = {cameraFront, -cameraUp, -cameraLeft, cameraPos};
+            alpha.eulerBuild(-20, 20, 0.01, cur);
             break;
     }
+}
+
+void Curvas_mousewheel(int wheel, int direction)
+{
+    printf("%d\n", direction);
 }

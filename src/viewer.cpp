@@ -8,24 +8,28 @@ vec3 cameraFront;
 vec3 cameraLeft;
 vec3 cameraUp;
 
-float currentTime = 0.0f, deltaTime = 0.0f;
+float currentTime = 0.0f;
+float deltaTime = 0.0f;
 float masterSpeed = 1.0f;
 float cameraSpeed = 1.0f;
 float mouseSpeed = 1.0f;
 
-bool mouseLook = false;
+bool flyMode = false;
 float keys[256];
 int nKeys = 0;
 
 void updateCamera()
 {
-    if(cameraAng.y > +PI/2) cameraAng.y = +PI/2;
-    if(cameraAng.y < -PI/2) cameraAng.y = -PI/2;
-    if(cameraAng.x < 0) cameraAng.x = 2*PI;
-    if(cameraAng.x > 2*PI) cameraAng.x = 0;
-    cameraFront = {cos(cameraAng.x)*cos(cameraAng.y), sin(cameraAng.x)*cos(cameraAng.y), sin(cameraAng.y)};
-    cameraLeft = {-sin(cameraAng.x), cos(cameraAng.x), 0};
-    cameraUp = cross(cameraFront, cameraLeft);
+    if(flyMode)
+    {
+        if(cameraAng.y > +PI/2) cameraAng.y = +PI/2;
+        if(cameraAng.y < -PI/2) cameraAng.y = -PI/2;
+        if(cameraAng.x < 0) cameraAng.x = 2*PI;
+        if(cameraAng.x > 2*PI) cameraAng.x = 0;
+        cameraFront = {cos(cameraAng.x)*cos(cameraAng.y), sin(cameraAng.x)*cos(cameraAng.y), sin(cameraAng.y)};
+        cameraLeft = {-sin(cameraAng.x), cos(cameraAng.x), 0};
+        cameraUp = cross(cameraFront, cameraLeft);
+    }
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(
@@ -86,7 +90,7 @@ void reshape(int w, int h)
 
 void motion(int x, int y)
 {
-    if(!mouseLook) return;
+    if(!flyMode) return;
     if(x == width/2 && y == height/2) return;
 
     cameraAng.x += ((float)width/2 - x) * mouseSpeed / 100.0f;
@@ -106,17 +110,21 @@ void keyUp(unsigned char key, int x, int y)
 {
     keys[(int)key] = 0.0f;
 
+    static vec3 savedCameraPos = cameraPos;
+
     switch(key)
     {
         case '*':
-            if(mouseLook)
+            if(flyMode)
             {
-                mouseLook = false;
+                flyMode = false;
+                savedCameraPos = cameraPos;
                 glutSetCursor(GLUT_CURSOR_INHERIT);
             }
             else
             {
-                mouseLook = true;
+                flyMode = true;
+                cameraPos = savedCameraPos;
                 glutWarpPointer(width/2, height/2);
                 glutSetCursor(GLUT_CURSOR_NONE);   
             }
@@ -126,12 +134,17 @@ void keyUp(unsigned char key, int x, int y)
             break;
         case '-':
             cameraSpeed /= 2.0f;
-            if(cameraSpeed <= 1.0f) cameraSpeed = 1.0f;
+            if(cameraSpeed <= 0.125f) cameraSpeed = 0.125f;
             break;
         default:
             Curvas_keypress(key, x, y);
             break;
     }
+}
+
+void mouseWheel(int wheel, int direction, int x, int y)
+{
+    Curvas_mousewheel(wheel, direction);
 }
 
 int main(int argc, char **argv)
@@ -149,6 +162,7 @@ int main(int argc, char **argv)
     glutIgnoreKeyRepeat(true);
     glutKeyboardFunc(keyDown);
     glutKeyboardUpFunc(keyUp);
+    glutMouseWheelFunc(mouseWheel);
 
     for(int i = 0; i < 256; i++) keys[i] = false;
 
