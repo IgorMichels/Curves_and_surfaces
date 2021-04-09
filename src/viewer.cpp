@@ -150,7 +150,7 @@ void mouseWheel(int wheel, int direction, int x, int y)
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB | GLUT_MULTISAMPLE);
     glutInitWindowPosition(500, 500);
     glutInitWindowSize(width, height);
     glutCreateWindow("Curves - curvature & torsion");
@@ -170,11 +170,10 @@ int main(int argc, char **argv)
     glEnable(GL_MULTISAMPLE);
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
     glEnable(GL_POINT_SMOOTH);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
+
+    glClearColor(0, 0, 0, 0);
 
     updateCamera();
 

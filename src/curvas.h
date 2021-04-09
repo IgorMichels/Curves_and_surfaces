@@ -100,15 +100,13 @@ struct Curva
     {
         if(pieces.size() < 2) return;
         
-        glLineWidth(4);
+        glLineWidth(5);
         glBegin(GL_LINES);
-        float c = 1;
         for(int i = 0; i < pieces.size()-1; i++)
         {
-            if(pieces[i].point.z <= 0) c = 0.5; else c = 1; 
-            glColor4f((pieces[i].tangent.x+1)/2, (pieces[i].tangent.y+1)/2, (pieces[i].tangent.z+1)/2, c);
+            glColor3f((pieces[i].tangent.x+1)/2, (pieces[i].tangent.y+1)/2, (pieces[i].tangent.z+1)/2);
             glVertex3f(pieces[i].point.x, pieces[i].point.y, pieces[i].point.z);
-            glColor4f((pieces[i+1].tangent.x+1)/2, (pieces[i+1].tangent.y+1)/2, (pieces[i+1].tangent.z+1)/2, c);
+            glColor3f((pieces[i+1].tangent.x+1)/2, (pieces[i+1].tangent.y+1)/2, (pieces[i+1].tangent.z+1)/2);
             glVertex3f(pieces[i+1].point.x, pieces[i+1].point.y, pieces[i+1].point.z);
         }
         glEnd();
@@ -119,14 +117,12 @@ struct Curva
         int f = iFrenet;
         if(f < 0) return;
 
-        glLineWidth(3);
+        glLineWidth(4);
         glBegin(GL_LINES);
-
-
         float s1 = 1-(sin(currentTime*masterSpeed*20)+1)/4;
 
         //TANGENT
-        glColor4f(1, 0, 0, s1);
+        glColor3f(s1, 0, 0);
         glVertex3f(pieces[f].point.x, pieces[f].point.y, pieces[f].point.z);
         glVertex3f(
             pieces[f].point.x+pieces[f].tangent.x, 
@@ -134,7 +130,7 @@ struct Curva
             pieces[f].point.z+pieces[f].tangent.z);
 
         //NORMAL
-        glColor4f(0, 1, 0, s1);
+        glColor3f(0, s1, 0);
         glVertex3f(pieces[f].point.x, pieces[f].point.y, pieces[f].point.z);
         glVertex3f(
             pieces[f].point.x+pieces[f].normal.x, 
@@ -142,7 +138,7 @@ struct Curva
             pieces[f].point.z+pieces[f].normal.z);
 
         //BINORMAL
-        glColor4f(0, 0, 1, s1);
+        glColor3f(0, 0, s1);
         glVertex3f(pieces[f].point.x, pieces[f].point.y, pieces[f].point.z);
         glVertex3f(
             pieces[f].point.x+pieces[f].binormal.x, 
@@ -156,13 +152,13 @@ struct Curva
         float N = 20;
         float S = 1;
 
-        glLineWidth(2);
+        glLineWidth(3);
         glBegin(GL_LINES);
         for(float k = -N; k <= +N; k++)
         {
-            float c = 1-abs(k/(N+1));
+            float c = (1-abs(k/(N+1)))/2;
             
-            glColor4f(c, c, c, 0.5);
+            glColor3f(c, c, c);
             glVertex3f(+k*S, +N*S, 0);
             glVertex3f(+k*S, -N*S, 0);
             glVertex3f(+N*S, +k*S, 0);

@@ -43,8 +43,23 @@ void Curvas_keypress(unsigned char key, int x, int y)
             break;
         case '0':
             alpha = CURVA(1, 0);
-            Frenet cur = {cameraFront, -cameraUp, -cameraLeft, cameraPos};
-            alpha.eulerBuild(-20, 20, 0.01, cur);
+            alpha.eulerBuild(-PI, PI+0.1, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            break;
+        case '1':
+            alpha = CURVA(1, 0.3);
+            alpha.eulerBuild(-4*PI, 4*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            break;
+        case '2':
+            alpha = CURVA(t, t/10);
+            alpha.eulerBuild(-4*PI, 4*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            break;
+        case '3':
+            alpha = CURVA(1, sin(t)/9);
+            alpha.eulerBuild(-8*PI, 8*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
+            break;
+        case '4':
+            alpha = CURVA(sin(t), 0);
+            alpha.eulerBuild(-8*PI, 8*PI, 0.01, {cameraFront, -cameraUp, -cameraLeft, cameraPos});
             break;
     }
 }
