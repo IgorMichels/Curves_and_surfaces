@@ -105,7 +105,7 @@ void Curvas_draw()
 void Curvas_keypress(unsigned char key, int x, int y)
 {
     Frenet cur = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-    if(customPos) cur = {cameraFront, -cameraUp, -cameraLeft, cameraPos};
+    if(customPos) cur = {cameraFront, cameraLeft, cameraUp, cameraPos};
     switch(key)
     {
         case 'g':
