@@ -106,7 +106,6 @@ struct Curva
                 glLineWidth(5 / length(cameraPos - pieces[i].point));
             else 
                 glLineWidth(5);
-                
             glBegin(GL_LINES);   
             glColor3f((pieces[i].tangent.x+1)/2, (pieces[i].tangent.y+1)/2, (pieces[i].tangent.z+1)/2);
             glVertex3f(pieces[i].point.x, pieces[i].point.y, pieces[i].point.z);
@@ -126,7 +125,7 @@ struct Curva
             glLineWidth(4 / length(cameraPos - pieces[f].point));
         else 
             glLineWidth(4);
-
+            
         glBegin(GL_LINES);
         float s1 = 1-(sin(currentTime*masterSpeed*20)+1)/4;
 

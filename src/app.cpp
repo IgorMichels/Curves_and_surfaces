@@ -142,7 +142,7 @@ void Curvas_keypress(unsigned char key, int x, int y)
             alpha.eulerBuild(-4, 4, stepSize, cur);
             break;
         case '8':
-            alpha = CURVA(0, 0);
+            alpha = CURVA(0, 1);
             alpha.eulerBuild(-4, 4, stepSize, cur);
             break;
     }
