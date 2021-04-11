@@ -62,7 +62,7 @@ void drawGrid(bool lineDepth)
     }
 
     if(lineDepth)
-        glLineWidth(2 / length((vec2){cameraPos.x, cameraPos.z}));
+        glLineWidth(2 / length((vec2){cameraPos.x, cameraPos.y}));
     else 
         glLineWidth(2);
 
