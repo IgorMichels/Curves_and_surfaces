@@ -33,23 +33,30 @@ void drawGrid()
     float N = 20;
     float S = 1;
 
-    glLineWidth(3);
-    glBegin(GL_LINES);
+    
     for(float k = -N; k <= +N; k++)
     {
-        
-        glColor3f(0, 0.2, 0);
-        glVertex3f(+k*S, +N*S, 0);
-        glVertex3f(+k*S, -N*S, 0);
-
-        glColor3f(0.2, 0, 0);
+        glLineWidth(2 / length((vec2){cameraPos.y - k*S, cameraPos.z}));
+        glBegin(GL_LINES);  
+        glColor3f(0.5, 0, 0);
         glVertex3f(+N*S, +k*S, 0);
         glVertex3f(-N*S, +k*S, 0);
+        glEnd();
+
+        glLineWidth(2 / length((vec2){cameraPos.x - k*S, cameraPos.z}));
+        glBegin(GL_LINES);
+        glColor3f(0, 0.5, 0);
+        glVertex3f(+k*S, +N*S, 0);
+        glVertex3f(+k*S, -N*S, 0);
+        glEnd();
     }
 
-    glColor3f(0, 0, 0.2);
+    glLineWidth(2 / length((vec2){cameraPos.x, cameraPos.z}));
+    glBegin(GL_LINES);
+    glColor3f(0, 0, 0.5);
     glVertex3f(0, 0, +N*S);
     glVertex3f(0, 0, -N*S);
+    glEnd();
 
     glEnd();
 }

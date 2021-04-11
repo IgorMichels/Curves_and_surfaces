@@ -100,16 +100,16 @@ struct Curva
     {
         if(pieces.size() < 2) return;
         
-        glLineWidth(5);
-        glBegin(GL_LINES);
         for(int i = 0; i < pieces.size()-1; i++)
         {
+            glLineWidth(5 / length(cameraPos - pieces[i].point));
+            glBegin(GL_LINES);   
             glColor3f((pieces[i].tangent.x+1)/2, (pieces[i].tangent.y+1)/2, (pieces[i].tangent.z+1)/2);
             glVertex3f(pieces[i].point.x, pieces[i].point.y, pieces[i].point.z);
             glColor3f((pieces[i+1].tangent.x+1)/2, (pieces[i+1].tangent.y+1)/2, (pieces[i+1].tangent.z+1)/2);
             glVertex3f(pieces[i+1].point.x, pieces[i+1].point.y, pieces[i+1].point.z);
+            glEnd();
         }
-        glEnd();
     }
 
     void drawFrenet()
@@ -118,7 +118,7 @@ struct Curva
         if(f < 0) return;
         if(f >= pieces.size()) return;
 
-        glLineWidth(4);
+        glLineWidth(4 / length(cameraPos - pieces[f].point));
         glBegin(GL_LINES);
         float s1 = 1-(sin(currentTime*masterSpeed*20)+1)/4;
 
