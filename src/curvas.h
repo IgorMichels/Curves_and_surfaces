@@ -96,13 +96,17 @@ struct Curva
         return setParameter(a);
     }
 
-    void drawCurve()
+    void drawCurve(bool lineDepth)
     {
         if(pieces.size() < 2) return;
         
         for(int i = 0; i < pieces.size()-1; i++)
         {
-            glLineWidth(5 / length(cameraPos - pieces[i].point));
+            if(lineDepth)
+                glLineWidth(5 / length(cameraPos - pieces[i].point));
+            else 
+                glLineWidth(5);
+                
             glBegin(GL_LINES);   
             glColor3f((pieces[i].tangent.x+1)/2, (pieces[i].tangent.y+1)/2, (pieces[i].tangent.z+1)/2);
             glVertex3f(pieces[i].point.x, pieces[i].point.y, pieces[i].point.z);
@@ -112,13 +116,17 @@ struct Curva
         }
     }
 
-    void drawFrenet()
+    void drawFrenet(bool lineDepth)
     {
         int f = iFrenet;
         if(f < 0) return;
         if(f >= pieces.size()) return;
 
-        glLineWidth(4 / length(cameraPos - pieces[f].point));
+        if(lineDepth)
+            glLineWidth(4 / length(cameraPos - pieces[f].point));
+        else 
+            glLineWidth(4);
+
         glBegin(GL_LINES);
         float s1 = 1-(sin(currentTime*masterSpeed*20)+1)/4;
 

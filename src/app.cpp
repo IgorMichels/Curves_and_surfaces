@@ -7,6 +7,7 @@ bool frenet = false;
 bool grid = false;
 bool localMode = false;
 bool customPos = false;
+bool lineDepth = false;
 float stepSize = 0.1;
 
 void Curvas_start(int argc, char **argv)
@@ -28,7 +29,7 @@ void Curvas_update()
     }
 }
 
-void drawGrid()
+void drawGrid(bool lineDepth)
 {
     float N = 20;
     float S = 1;
@@ -36,14 +37,22 @@ void drawGrid()
     
     for(float k = -N; k <= +N; k++)
     {
-        glLineWidth(2 / length((vec2){cameraPos.y - k*S, cameraPos.z}));
+        if(lineDepth)
+            glLineWidth(2 / length((vec2){cameraPos.y - k*S, cameraPos.z}));
+        else 
+            glLineWidth(2);
+
         glBegin(GL_LINES);  
         glColor3f(0.5, 0, 0);
         glVertex3f(+N*S, +k*S, 0);
         glVertex3f(-N*S, +k*S, 0);
         glEnd();
 
-        glLineWidth(2 / length((vec2){cameraPos.x - k*S, cameraPos.z}));
+        if(lineDepth)
+            glLineWidth(2 / length((vec2){cameraPos.x - k*S, cameraPos.z}));
+        else
+            glLineWidth(2);
+
         glBegin(GL_LINES);
         glColor3f(0, 0.5, 0);
         glVertex3f(+k*S, +N*S, 0);
@@ -51,7 +60,11 @@ void drawGrid()
         glEnd();
     }
 
-    glLineWidth(2 / length((vec2){cameraPos.x, cameraPos.z}));
+    if(lineDepth)
+        glLineWidth(2 / length((vec2){cameraPos.x, cameraPos.z}));
+    else 
+        glLineWidth(2);
+
     glBegin(GL_LINES);
     glColor3f(0, 0, 0.5);
     glVertex3f(0, 0, +N*S);
@@ -63,9 +76,9 @@ void drawGrid()
 
 void Curvas_draw()
 {
-    if(grid) drawGrid();
-    if(frenet) alpha.drawFrenet();
-    alpha.drawCurve();
+    if(grid) drawGrid(lineDepth);
+    if(frenet) alpha.drawFrenet(lineDepth);
+    alpha.drawCurve(lineDepth);
 }
 
 void Curvas_keypress(unsigned char key, int x, int y)
@@ -92,6 +105,9 @@ void Curvas_keypress(unsigned char key, int x, int y)
             break;
         case 'x':
             stepSize *= 2;
+            break;
+        case 'b':
+            lineDepth = !lineDepth;
             break;
         case '0':
             alpha = CURVA(1, 0);
