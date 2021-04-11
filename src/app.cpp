@@ -5,16 +5,19 @@ Curva alpha;
 
 bool frenet = false;
 bool grid = false;
+bool localMode = false;
+bool customPos = false;
 
 void Curvas_start(int argc, char **argv)
 {
+
 }
 
 void Curvas_update()
 {
     alpha.setParameter(alpha.parameter + masterSpeed * cameraSpeed * deltaTime * (keys[']'] - keys['[']));
 
-    if(!flyMode && alpha.iFrenet >= 0)
+    if(!flyMode && localMode && alpha.iFrenet >= 0)
     {
         cameraFront = alpha.pieces[alpha.iFrenet].tangent;
         cameraLeft = -alpha.pieces[alpha.iFrenet].binormal;
@@ -24,16 +27,43 @@ void Curvas_update()
     }
 }
 
+void drawGrid()
+{
+    float N = 20;
+    float S = 1;
+
+    glLineWidth(3);
+    glBegin(GL_LINES);
+    for(float k = -N; k <= +N; k++)
+    {
+        
+        glColor3f(0, 0.2, 0);
+        glVertex3f(+k*S, +N*S, 0);
+        glVertex3f(+k*S, -N*S, 0);
+
+        glColor3f(0.2, 0, 0);
+        glVertex3f(+N*S, +k*S, 0);
+        glVertex3f(-N*S, +k*S, 0);
+    }
+
+    glColor3f(0, 0, 0.2);
+    glVertex3f(0, 0, +N*S);
+    glVertex3f(0, 0, -N*S);
+
+    glEnd();
+}
+
 void Curvas_draw()
 {
-    if(grid) alpha.drawGrid();
+    if(grid) drawGrid();
     if(frenet) alpha.drawFrenet();
     alpha.drawCurve();
 }
 
 void Curvas_keypress(unsigned char key, int x, int y)
 {
-    Frenet cur = {cameraFront, -cameraUp, -cameraLeft, cameraPos};
+    Frenet cur = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    if(customPos) cur = {cameraFront, -cameraUp, cameraLeft, cameraPos};
     if(!flyMode) if(alpha.iFrenet >= 0) cur = alpha.pieces[alpha.iFrenet];
     switch(key)
     {
@@ -42,6 +72,12 @@ void Curvas_keypress(unsigned char key, int x, int y)
             break;
         case 'f':
             frenet = !frenet;
+            break;
+        case 'l':
+            localMode = !localMode;
+            break;
+        case 'c':
+            customPos = !customPos;
             break;
         case '0':
             alpha = CURVA(1, 0);

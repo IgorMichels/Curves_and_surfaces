@@ -116,6 +116,7 @@ struct Curva
     {
         int f = iFrenet;
         if(f < 0) return;
+        if(f >= pieces.size()) return;
 
         glLineWidth(4);
         glBegin(GL_LINES);
@@ -144,27 +145,6 @@ struct Curva
             pieces[f].point.x+pieces[f].binormal.x, 
             pieces[f].point.y+pieces[f].binormal.y,
             pieces[f].point.z+pieces[f].binormal.z);
-        glEnd();
-    }
-
-    void drawGrid()
-    {
-        float N = 20;
-        float S = 1;
-
-        glLineWidth(3);
-        glBegin(GL_LINES);
-        for(float k = -N; k <= +N; k++)
-        {
-            float c = (1-abs(k/(N+1)))/2;
-            
-            glColor3f(c, c, c);
-            glVertex3f(+k*S, +N*S, 0);
-            glVertex3f(+k*S, -N*S, 0);
-            glVertex3f(+N*S, +k*S, 0);
-            glVertex3f(-N*S, +k*S, 0);
-        }
-
         glEnd();
     }
 };

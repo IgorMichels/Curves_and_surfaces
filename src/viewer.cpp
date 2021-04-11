@@ -63,11 +63,14 @@ void idle()
     deltaTime = newtime - currentTime;
     currentTime = newtime;
 
-    vec3 vel = (
-        (keys['w']- keys['s']) * cameraFront + 
-        (keys['a']- keys['d']) * cameraLeft);
+    if(flyMode)
+    {
+        vec3 vel = (
+            (keys['w']- keys['s']) * cameraFront + 
+            (keys['a']- keys['d']) * cameraLeft);
 
-    cameraPos += vel*masterSpeed*cameraSpeed*deltaTime;
+        cameraPos += vel*masterSpeed*cameraSpeed*deltaTime;
+    }
 
     Curvas_update();
     updateCamera();
@@ -162,7 +165,7 @@ int main(int argc, char **argv)
     glutIgnoreKeyRepeat(true);
     glutKeyboardFunc(keyDown);
     glutKeyboardUpFunc(keyUp);
-    glutMouseWheelFunc(mouseWheel);
+    //glutMouseWheelFunc(mouseWheel);
 
     for(int i = 0; i < 256; i++) keys[i] = false;
 
