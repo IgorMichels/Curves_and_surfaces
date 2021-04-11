@@ -65,9 +65,10 @@ void idle()
 
     if(flyMode)
     {
-        vec3 vel = (
+        vec3 vel = 
             (keys['w']- keys['s']) * cameraFront + 
-            (keys['a']- keys['d']) * cameraLeft);
+            (keys['a']- keys['d']) * cameraLeft + 
+            (keys['e']- keys['q']) * cameraUp;
 
         cameraPos += vel*masterSpeed*cameraSpeed*deltaTime;
     }
@@ -165,7 +166,7 @@ int main(int argc, char **argv)
     glutIgnoreKeyRepeat(true);
     glutKeyboardFunc(keyDown);
     glutKeyboardUpFunc(keyUp);
-    //glutMouseWheelFunc(mouseWheel);
+    //glutMouseWheelFunc(mouseWheel); //unused
 
     for(int i = 0; i < 256; i++) keys[i] = false;
 

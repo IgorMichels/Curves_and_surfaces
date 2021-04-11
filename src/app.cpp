@@ -7,6 +7,7 @@ bool frenet = false;
 bool grid = false;
 bool localMode = false;
 bool customPos = false;
+float stepSize = 0.1;
 
 void Curvas_start(int argc, char **argv)
 {
@@ -64,7 +65,6 @@ void Curvas_keypress(unsigned char key, int x, int y)
 {
     Frenet cur = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
     if(customPos) cur = {cameraFront, -cameraUp, cameraLeft, cameraPos};
-    if(!flyMode) if(alpha.iFrenet >= 0) cur = alpha.pieces[alpha.iFrenet];
     switch(key)
     {
         case 'g':
@@ -79,33 +79,48 @@ void Curvas_keypress(unsigned char key, int x, int y)
         case 'c':
             customPos = !customPos;
             break;
+        case 'z':
+            stepSize /= 2;
+            if(stepSize < 0.0001) stepSize = 0.0001;
+            break;
+        case 'x':
+            stepSize *= 2;
+            break;
         case '0':
             alpha = CURVA(1, 0);
-            alpha.eulerBuild(-PI, PI+0.1, 0.01, cur);
+            alpha.eulerBuild(-PI, PI+0.1, stepSize, cur);
             break;
         case '1':
             alpha = CURVA(1, 0.3);
-            alpha.eulerBuild(-4*PI, 4*PI, 0.01, cur);
+            alpha.eulerBuild(-4*PI, 4*PI, stepSize, cur);
             break;
         case '2':
             alpha = CURVA(t, t/10);
-            alpha.eulerBuild(-4*PI, 4*PI, 0.01, cur);
+            alpha.eulerBuild(-4*PI, 4*PI, stepSize, cur);
             break;
         case '3':
             alpha = CURVA(1, sin(t)/9);
-            alpha.eulerBuild(-8*PI, 8*PI, 0.01, cur);
+            alpha.eulerBuild(-8*PI, 8*PI, stepSize, cur);
             break;
         case '4':
             alpha = CURVA(sin(t), 0);
-            alpha.eulerBuild(-8*PI, 8*PI, 0.01, cur);
+            alpha.eulerBuild(-8*PI, 8*PI, stepSize, cur);
             break;
         case '5':
             alpha = CURVA(1, t/abs(t+1));
-            alpha.eulerBuild(-8*PI, 8*PI, 0.01, cur);
+            alpha.eulerBuild(-8*PI, 8*PI, stepSize, cur);
             break;
         case '6':
-            alpha = CURVA(3*exp(-t*t/9)/2, 0);
-            alpha.eulerBuild(-4, 4, 0.01, cur);
+            alpha = CURVA(3*exp(-t*t/9)/2, 0.1);
+            alpha.eulerBuild(-4, 4, stepSize, cur);
+            break;
+        case '7':
+            alpha = CURVA(0, 0);
+            alpha.eulerBuild(-4, 4, stepSize, cur);
+            break;
+        case '8':
+            alpha = CURVA(0, 0);
+            alpha.eulerBuild(-4, 4, stepSize, cur);
             break;
     }
 }
