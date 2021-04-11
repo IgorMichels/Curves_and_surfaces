@@ -40,16 +40,6 @@ void updateCamera()
 
 void display()
 {
-    static float fps_time = 0;
-    static int frames = 0;
-    if(currentTime - fps_time > 1)
-    {
-        fps_time = currentTime;
-        printf("FPS: %d\n", frames);
-        frames = 0;
-    }
-    frames++;
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     Curvas_draw();
