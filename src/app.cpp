@@ -3,12 +3,12 @@
 
 Curva alpha;
 
-bool frenet = false;
-bool grid = false;
+bool frenet = true;
+bool grid = true;
 bool localMode = false;
 bool customPos = false;
-bool lineDepth = false;
-float stepSize = 0.1;
+bool lineDepth = true;
+float stepSize = 0.001;
 const char *curveName = "None";
 
 void Curvas_start(int argc, char **argv)
@@ -82,7 +82,7 @@ void Curvas_draw()
     if(currentTime - fps_time > 0.5)
     {
         fps_time = currentTime;
-        system("clear");
+        int i = system("clear");
         printf("FPS: %d\n", frames);
         if(localMode && !flyMode) printf("Local View\n");
         else printf("Global view\n");
@@ -91,7 +91,7 @@ void Curvas_draw()
         printf("Line depth: %d\n", lineDepth);
         printf("Custom position: %d\n", customPos);
         printf("Curve: %s\n", curveName);
-        printf("Step size: %f\n", stepSize);
+        printf("Step size: %g\n", stepSize);
 
         frames = 0;
     }
@@ -122,7 +122,7 @@ void Curvas_keypress(unsigned char key, int x, int y)
             break;
         case 'z':
             stepSize /= 2;
-            if(stepSize < 0.0001) stepSize = 0.0001;
+            if(stepSize < 0.00001) stepSize = 0.00001;
             break;
         case 'x':
             stepSize *= 2;
