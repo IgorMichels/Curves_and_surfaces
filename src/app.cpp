@@ -1,6 +1,8 @@
 #include "defs.h"
 #include "curvas.h"
 
+#include <vector>
+
 Curva alpha;
 
 bool frenet = true;
@@ -8,12 +10,20 @@ bool grid = true;
 bool localMode = false;
 bool customPos = false;
 bool lineDepth = true;
+bool drawStars = true;
 float stepSize = 0.001;
 const char *curveName = "None";
 
+std::vector<vec3> stars;
+
 void Curvas_start(int argc, char **argv)
 {
-
+    for(int i = 0; i < 1000; i++)
+    {
+        vec3 star = {(float)rand()/RAND_MAX*2 - 1, (float)rand()/RAND_MAX*2 - 1, (float)rand()/RAND_MAX*2 - 1};
+        star = normalize(star) * 1000.0f;
+        stars.push_back(star);
+    }
 }
 
 void Curvas_update()
@@ -97,6 +107,20 @@ void Curvas_draw()
     }
     frames++;
 
+    if(drawStars)
+    {
+        glPointSize(0.1);
+        float c = 0.3;
+        glColor3f(c, c, c);
+        glBegin(GL_POINTS);
+        for(vec3 s : stars)
+        {
+            glVertex3f(s.x, s.y, s.z);
+        }
+        glEnd();
+    }
+
+
     if(grid) drawGrid(lineDepth);
     if(frenet) alpha.drawFrenet(lineDepth);
     alpha.drawCurve(lineDepth);
@@ -130,6 +154,9 @@ void Curvas_keypress(unsigned char key, int x, int y)
         case 'b':
             lineDepth = !lineDepth;
             break;
+        case 'p':
+            drawStars = !drawStars;
+            break;
         case '0':
             curveName = "Circle (1, 0)";
             alpha = CURVA(1, 0);
@@ -161,9 +188,9 @@ void Curvas_keypress(unsigned char key, int x, int y)
             alpha.eulerBuild(-8*PI, 8*PI, stepSize, cur);
             break;
         case '6':
-            curveName = "Loop (1.5e^(-t^2/9), 0.1)";
-            alpha = CURVA(3*exp(-t*t/9)/2, 0.1);
-            alpha.eulerBuild(-4, 4, stepSize, cur);
+            curveName = "Strip (2.4*sin(t), 0.2)";
+            alpha = CURVA(2.4*cos(t), t*sin(t));
+            alpha.eulerBuild(-20, 20, stepSize, cur);
             break;
         case '7':
             curveName = "Line (0, 0)";
@@ -174,6 +201,11 @@ void Curvas_keypress(unsigned char key, int x, int y)
             curveName = "Line (0, 1)";
             alpha = CURVA(0, 1);
             alpha.eulerBuild(-4, 4, stepSize, cur);
+            break;
+        case '9':
+            curveName = "Curve (t*sin(t), 0.5)";
+            alpha = CURVA(t*sin(t), 0.5);
+            alpha.eulerBuild(-10, 10, stepSize, cur);
             break;
     }
 }

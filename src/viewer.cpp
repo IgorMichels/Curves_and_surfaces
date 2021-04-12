@@ -76,7 +76,7 @@ void reshape(int w, int h)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
-    gluPerspective(120, aspect, 0.01, 100);
+    gluPerspective(120, aspect, 0.01, 2000);
     updateCamera();
     width = w;
     height = h;
