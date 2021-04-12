@@ -335,7 +335,7 @@ Um outro exemplo, um pouco mais divertido, traz uma curva cuja curvatura e torç
     \right.
 \end{equation}
 
-A resolução do sistema é uma atividade mais mecânica e, como já desenvolvemos para o Exemplo \ref{exemplo_1}, optamos por omitir as contas. Como resultado teremos os seguintes vetores:
+A resolução do sistema em si é um processo mecânico. Como já desenvolvemos as contas para o Exemplo \ref{exemplo_1}, optamos por omitir nesse segundo exemplo. No fim, teremos os seguintes vetores:
 \[T(t) = \left(\cos{\dfrac{1}{2}t(t + 2)}, \sin{\dfrac{1}{2}t(t + 2)}, 0\right),\]
 \[N(t) = \left(-\sin{\dfrac{1}{2}t(t + 2)}, \cos{\dfrac{1}{2}t(t + 2)}, 0\right),\]
 \[B(t) = \left(0, 0, 1\right).\]
@@ -345,17 +345,145 @@ Consequentemente, nossa curva será dada por
 
 Note que essa é uma curva plana, resultado totalmente esperado pois, conforme visto em aula, uma curva com torção nula será plana.
 
-\section{Animações}
+\section{Soluções numéricas e Animações}
 
+Dadas as funções $\kappa(t)$ e $\tau(t)$ para a curvatura e a torção de uma curva, respectivamente, queremos construí-la. Para isso, montamos o sistema de equações diferenciais
 
+\begin{equation}
+    \begin{split}
+        T'(t) & = \kappa(t) N(t) \\
+        N'(t) & = -\kappa(t) T(t) + \tau(t) B(t) \\
+        B'(t) & = -\tau(t) N(t) \\
+        P'(t) & = T(t)
+    \end{split}
+    \label{euler1}
+\end{equation}
+    
+e a resolvemos considerando os valores iniciais ($T_0$, $N_0$, $B_0$) e $P_0$, representando o triedro de Frenet inicial, incluindo o ponto inicial.
 
+Tal sistema pode ser muito complicado de resolver dependendo das funções $\kappa$ e $\tau$, e frequentemente é possível apenas construir aproximações.
 
+\subsection{O método de Euler}
 
+Decidimos usar o método mais simples para isso, o método de Euler. Esse método consiste em usar uma aproximação linear de uma função para estimar um valor próximo do centro do aproximação.
 
+Por exemplo, considere o sistema $f'(t) = g(t)$, onde $g$ é conhecido. Sabendo que $f(t_0) = f_0$, então podemos estimar 
+\[f(t_0 + h_0) \approx f(t_0) + h_0f'(t_0)\]
+
+Quanto mais próximo $h_0$ for de zero, mais próxima a estimativa vai estar do valor real. Podemos fazer uma série de estimativas iterando esse método, obtendo estimativas para $f(t_0 + kh_0)$. Poderíamos escolher valores diferentes para $h$. Por exemplo, escolher intervalos menores para derivadas maiores, em módulo. Decidimos manter os intervalos com tamanhos iguais $h_0$.
+
+Agora podemos aplicar esse método em \ref{euler1}. Primeiramente, notamos que a derivada do vetor $T$ não é exatamente conhecida, pois apenas conhecemos a função $\kappa$, mas não $N$. O vetor normal também vai ser estimado. De qualquer maneira, podemos aplicar a iteração
+
+\begin{equation}
+    \begin{split}
+        T_{k + 1} & = T_k + h\kappa_k N_k \\
+        N_{k + 1} & = N_k + h(-\kappa_k T_k + \tau_k B_k) \\
+        B_{k + 1} & = B_k - h\tau_k N_k \\
+        P_{k + 1} & = P_k + hT_k
+    \end{split}
+    \label{euler2}
+\end{equation}
+
+onde qualquer subscrito $x_k$ indica $x(t_k)$.
+
+\subsection{Ortogonalidade do triedro}
+
+Podemos analisar o comportamento do triedro $(T, N, B)$ depois de uma iteração do método de Euler descrito em \ref{euler2}. Para isso, basta aplicar o produto interno nos seguintes pares, supondo que o triedro anterior é ortonormal:
+
+\begin{equation}
+    \begin{split}
+        \langle T_{k + 1}, T_{k + 1}\rangle & = 1 + h^2\kappa_k^2 \\
+        \langle T_{k + 1}, N_{k +1 }\rangle & = - h\kappa_k + h\kappa_k = 0 \\
+        \langle T_{k + 1}, B_{k + 1}\rangle & = -h^2\kappa_k\tau_k \\
+        \langle N_{k + 1}, N_{k + 1}\rangle & = 1 + h^2(\kappa_k^2 + \tau_k^2) \\
+    \end{split}
+    \label{euler3}
+\end{equation}
+
+Podemos ver que os vetores $T_{k + 1}$ e $N_{k + 1}$ são próximos mas não exatamente unitários. Podemos corrigir isso normalizando-os. Note que os vetores $T$ e $N$ permanecem ortogonais, e obviamente continuam depois da normalização. Entretanto, os vetores $T$ e $B$ não permanecem ortogonais. Já sabemos que $B(t) = T(t) \times N(t)$, então podemos fazer 
+\[B_{k + 1} = T_{k + 1} \times N_{k + 1}\]
+
+O vetor binormal continua unitário pois os vetores tangente e normal no produto vetorial também são.
+
+Portanto, a nossa iteração é
+
+\begin{equation}
+    \begin{split}
+        T_{k + 1} & = \frac{T_k + h\kappa_k N_k}{\sqrt{1 + h^2\kappa_k^2}} \\
+        N_{k + 1} & = \frac{N_k + h(-\kappa_k T_k + \tau_k B_k)}{\sqrt{1 + h^2(\kappa_k^2 + \tau_k^2)}} \\
+        B_{k + 1} & = T_{k + 1} \times B_{k + 1} \\
+        P_{k + 1} & = P_k + hT_k
+    \end{split}
+    \label{euler4}
+\end{equation}
+
+Essa é a iteração usada na nossa aplicação.
+
+Vale notar que esse método permite curvatura não positiva, pois não há ambiguidades sobre a curva gerada. Por exemplo, uma reta unit-speed pode ser representada dessa forma, mas não de forma única.
+
+\subsection{Aplicação}
+
+A nossa aplicação é construída na linguagem \textit{C++} e usa a API \textit{OpenGL} para desenhar os gráficos. A aplicação é capaz de gerar uma curva aproximada por segmentos, usando o método em \ref{euler4}. Cada pedaço da curva possui os atributos: 
+
+\begin{itemize}
+    \item
+        os vetores tangente, normal e binormal
+        
+    \item
+        o ponto associado
+        
+    \item
+        o parâmetro associado
+\end{itemize}
+Esses atributos facilitam a manipulação do triedro.
+
+Os valores iniciais dessa curva podem ser a base canônica na origem, ou a posição e orientação da câmera.
+
+Há uma paleta de curvas pré-determinadas que podem ser colocadas no espaço, porém uma de cada vez. As funções de curvatura e de torção podem ser facilmente alteradas no código-fonte, bastando apenas a recompilação do código.
+
+A curva é desenhada segmento por segmento, onde a cor do segmento é determinada pelo vetor tangente. Mais precisamente, a cor é $(R, G, B) = (T + (1, 1, 1))/2$, onde os componentes devem estar no intervalo $[0, 1]$.
+
+O triedro pode ser desenhado também, onde os vetores são desenhados a partir do ponto associado. O vetores tangente, normal e binormal são verde, vermelho e azul, respectivamente. É possível alterar o parâmetro da curva associado ao triedro, para fazê-lo andar sobre a curva. Também é possível fazer a câmera ficar travada sobre esse triedro, para visualizar a curva localmente.
+
+A aplicação também pode desenhar uma grade limitada sobre o eixo xy, e um segmento sobre o eixo z, para termos noção de posição absoluta.
+
+Além de poder visualizar a curva localmente, há um modo de visualização onde a câmera é controlada livremente, tanto a posição quanto a direção.
+
+\subsection{Resultado}
+
+Fizemos algumas imagens de algumas curvas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{img/circle.png}
+    \caption{Círculo $\kappa = 1$, $\tau = 0$}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{img/helix.png}
+    \caption{Hélice $\kappa = 1$, $\tau = 0.3$}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{img/global.png}
+    \caption{Curva (visão global) $\kappa = t$, $\tau = t/10$}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale = 0.5]{img/local.png}
+    \caption{Curva (visão local) $\kappa = t$, $\tau = t/10$}
+\end{figure}
+
+Tal aplicação pode ser encontrada em \cite{github}.
 
 \section{Conclusão}
 
-Nesse trabalho vimos o Teorema Fundamental das Curvas Espaciais, o qual nos diz que uma curva no espaço é definida por uma função curvatura positiva e por uma função torção. Além disso, vimos como podemos obter uma curva possuindo tais funções, com o intuito de ilustrar o teorema. Por fim, apresentamos um programa que calcula, iterativamente, tais curvas.
+Nesse trabalho vimos o Teorema Fundamental das Curvas Espaciais, o qual nos diz que uma curva no espaço é definida por uma função curvatura positiva e por uma função torção. Além disso, vimos como podemos obter uma curva possuindo tais funções, com o intuito de ilustrar o teorema. 
+
+Nota-se que nem sempre o sistema de EDO's gerado é de fácil resolução, dessa forma apresentamos um programa que calcula, iterativamente, tais curvas.
 
 \begin{thebibliography}{9}
 
@@ -370,6 +498,8 @@ Nesse trabalho vimos o Teorema Fundamental das Curvas Espaciais, o qual nos diz 
 \bibitem{coda} Codá, F. (2015). Geometria Diferencial. IMPA. \url{https://www.youtube.com/watch?v=bZiAkM6ab08}.
 
 \bibitem{lima} Lima, R. F. de. (2016). Introdução à Geometria Diferencial. SBM.
+
+\bibitem{github} Grundmann, C.; Michels, I. P. (2021). \url{https://github.com/IgorMichels/Curves_A1}.
 
 \end{thebibliography}
 
