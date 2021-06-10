@@ -22,7 +22,8 @@ struct Surface
 
     vector points[MAX_NUM][MAX_NUM];
 
-    std::vector<vector> path;
+    std::vector<vector> paths;
+    std::vector<int> cuts;
 
     void sample(int numGrid)
     {
@@ -150,14 +151,23 @@ struct Surface
 
         //path
         glColor3f(0, 0, 0);
-        glLineWidth(3);
+        glLineWidth(4);
         glBegin(GL_LINES);
 
-        for(int i = 1; i < path.size(); i ++)
+        int pt = 0;
+        for(int c = 0; c < cuts.size(); c++)
         {
-            glVertex3f(path[i].x, path[i].y, path[i].z);
-            glVertex3f(path[i-1].x, path[i-1].y, path[i-1].z);
+            for(int i = 1; i < cuts[c]; i++)
+            {
+                if(pt+i < paths.size())
+                {
+                    glVertex3f(paths[pt+i-0].x, paths[pt+i-0].y, paths[pt+i-0].z);
+                    glVertex3f(paths[pt+i-1].x, paths[pt+i-1].y, paths[pt+i-1].z);
+                }
+            }
+            pt += cuts[c];
         }
+        
         glEnd();
     }
 
@@ -204,7 +214,12 @@ struct Surface
         dist += abs(dup) + abs(dleft);
         if(dist > 0.005)
         {
-            path.push_back(comp.surface(pos.u, pos.v));
+            if(trace) 
+            {
+                paths.push_back(comp.surface(pos.u, pos.v));
+                if(cuts.size() == 0) cuts.push_back(1);
+                else cuts[cuts.size()-1]++;
+            }
             dist = 0;
         }
         step(dup);
@@ -235,7 +250,7 @@ void surf_keydown(unsigned char key)
 {
     switch(key)
     {
-        case 'm':
+        case '*':
             lookMode = !lookMode;
             if(lookMode) glutWarpPointer(width/2, height/2);
             break;
@@ -270,11 +285,16 @@ void surf_keydown(unsigned char key)
             if(surf.numGrid+1 < MAX_NUM)
                 surf.sample(surf.numGrid+1);
             break;
+        case '0':
+            surf.paths.clear();
+            surf.cuts.clear();
+            break;
         case '1':
             surf.showant = !surf.showant;
             break;
-        case '0':
-            surf.path.clear();
+        case '2':
+            surf.trace = !surf.trace;
+            surf.cuts.push_back(0);
             break;
     }
 }
