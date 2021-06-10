@@ -1,0 +1,29 @@
+/*
+Grammar for expressions:
+
+surface ::= vector [ additive , additive ] [ additive , additive ]
+
+vector ::= ( additive , additive, additive )
+
+additive ::= additive + multiplicative
+           | additive - multiplicative
+           | multiplicative
+
+multiplicative ::= multiplicative * unary
+                 | multiplicative exponential
+                 | multiplicative / unary
+                 |unary
+
+unary ::= +unary
+        | -unary
+        | exponential
+
+exponential ::= factor ^ exponential
+              | factor
+
+factor ::= number
+         | constant
+         | ( additive )
+         | variable
+         | function factor
+*/

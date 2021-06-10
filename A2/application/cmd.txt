@@ -1,0 +1,1 @@
+g++ output.cpp -O3 -shared -fPIC -lm -ffast-math -o output.so
