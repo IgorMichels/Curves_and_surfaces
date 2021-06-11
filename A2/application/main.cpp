@@ -25,6 +25,8 @@ struct Surface
     std::vector<vector> paths;
     std::vector<int> cuts;
 
+    Camera localCam;
+
     void sample(int numGrid)
     {
         if(!comp.library) 
@@ -66,6 +68,8 @@ struct Surface
     void draw()
     {
         if(!comp.library) return;
+
+        updateCamera();
 
         //surface faces
         glBegin(GL_QUADS);
@@ -212,7 +216,7 @@ struct Surface
     {
         static float dist = 0;
         dist += abs(dup) + abs(dleft);
-        if(dist > 0.005)
+        if(dist > 0.001)
         {
             if(trace) 
             {
@@ -226,6 +230,26 @@ struct Surface
         turn(pi/2);
         step(dleft);
         turn(-pi/2);
+    }
+
+    void updateCamera()
+    {
+        float height = 0.02;
+        vector s = comp.surface(pos.u, pos.v);
+        vector du = comp.partial_u(pos.u, pos.v);
+        vector dv = comp.partial_v(pos.u, pos.v);
+        localCam.front = { vel.u*du.x + vel.v*dv.x, vel.u*du.y + vel.v*dv.y, vel.u*du.z + vel.v*dv.z };
+        uv tmp = vel;
+        turn(pi/2);
+        localCam.left = { vel.u*du.x + vel.v*dv.x, vel.u*du.y + vel.v*dv.y, vel.u*du.z + vel.v*dv.z };
+        vel = tmp;
+        localCam.up = cross(localCam.front, localCam.left);
+        localCam.pos =
+        { 
+            s.x + height*localCam.up.x - 0.03*localCam.front.x,
+            s.y + height*localCam.up.y - 0.03*localCam.front.y,
+            s.z + height*localCam.up.z - 0.03*localCam.front.z
+        };
     }
 };
 
@@ -242,8 +266,8 @@ void surf_idle()
     surf.pos.u += (keys['t']-keys['g'])*sp;
     surf.pos.v += (keys['f']-keys['h'])*sp;
 
-    surf.turn((keys['o'] - keys['u'])*sp*2);
-    surf.walk((keys['i'] - keys['k'])*sp, (keys['l'] - keys['j'])*sp);
+    surf.turn((keys['u'] - keys['o'])*sp*4);
+    surf.walk((keys['i'] - keys['k'])*sp, (keys['j'] - keys['l'])*sp);
 }
 
 void surf_keydown(unsigned char key)
@@ -295,6 +319,20 @@ void surf_keydown(unsigned char key)
         case '2':
             surf.trace = !surf.trace;
             surf.cuts.push_back(0);
+            break;
+        case '3':
+            if(cam == &mainCamera) 
+            {
+                lookMode = false;
+                flyMode = false;
+                cam = &surf.localCam;
+            }
+            else
+            {
+                lookMode = true;
+                flyMode = true;
+                cam = &mainCamera;
+            }
             break;
     }
 }

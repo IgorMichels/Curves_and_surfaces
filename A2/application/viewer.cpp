@@ -22,13 +22,16 @@ int nKeys = 0;
 
 void updateCamera()
 {
-    if(cam->ang.y > +pi/2) cam->ang.y = +pi/2;
-    if(cam->ang.y < -pi/2) cam->ang.y = -pi/2;
-    if(cam->ang.x < 0) cam->ang.x = 2*pi;
-    if(cam->ang.x > 2*pi) cam->ang.x = 0;
-    cam->front = {cos(cam->ang.x)*cos(cam->ang.y), sin(cam->ang.x)*cos(cam->ang.y), sin(cam->ang.y)};
-    cam->left = {-sin(cam->ang.x), cos(cam->ang.x), 0};
-    cam->up = cross(cam->front, cam->left);
+    if(lookMode)
+    {
+        if(cam->ang.y > +pi/2) cam->ang.y = +pi/2;
+        if(cam->ang.y < -pi/2) cam->ang.y = -pi/2;
+        if(cam->ang.x < 0) cam->ang.x = 2*pi;
+        if(cam->ang.x > 2*pi) cam->ang.x = 0;
+        cam->front = {cos(cam->ang.x)*cos(cam->ang.y), sin(cam->ang.x)*cos(cam->ang.y), sin(cam->ang.y)};
+        cam->left = {-sin(cam->ang.x), cos(cam->ang.x), 0};
+        cam->up = cross(cam->front, cam->left);
+    }
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
