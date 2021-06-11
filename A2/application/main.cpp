@@ -39,11 +39,24 @@ struct Surface
 
         quad q = comp.limits(0, 0);
 
-        if(numGrid < 4 || numGrid >= MAX_NUM || q.w >= q.x || q.y >= q.z)
+        if(numGrid < 4) numGrid = 4;
+        if(numGrid > MAX_NUM) numGrid = MAX_NUM;
+
+        if(q.w >= q.x)
         {
-            this->numGrid = 0;
-            return;
+            float tmp = q.x;
+            q.x = q.w;
+            q.w = tmp;
         }
+
+        if(q.y >= q.z)
+        {
+            float tmp = q.z;
+            q.z = q.y;
+            q.y = tmp;
+        }
+
+
 
         this->numGrid = numGrid;
         this->min_u = q.w;
@@ -297,19 +310,15 @@ void surf_keydown(unsigned char key)
             surf.partials = !surf.partials;
             break;
         case 'v':
-            if(surf.numGrid/2 >= 4)
                 surf.sample(surf.numGrid/2);
             break;
         case 'b':
-            if(surf.numGrid*2 < MAX_NUM)
                 surf.sample(surf.numGrid*2);
             break;
         case 'n':
-            if(surf.numGrid-1 >= 4)
                 surf.sample(surf.numGrid-1);
             break;
         case 'm':
-            if(surf.numGrid+1 < MAX_NUM)
                 surf.sample(surf.numGrid+1);
             break;
         case '0':
