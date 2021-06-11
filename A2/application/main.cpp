@@ -11,6 +11,8 @@ struct Surface
     float min_v, max_v;
     int numGrid;
 
+    float side = 1.0f;
+
     bool grid = false;
     bool faces = true;
     bool partials = true;
@@ -196,6 +198,7 @@ struct Surface
 
     void turn(float dt)
     {
+        dt *= side;
         float E = comp.metric_e(pos.u, pos.v);
         float F = comp.metric_f(pos.u, pos.v);
         float G = comp.metric_g(pos.u, pos.v);
@@ -241,9 +244,9 @@ struct Surface
         localCam.front = { vel.u*du.x + vel.v*dv.x, vel.u*du.y + vel.v*dv.y, vel.u*du.z + vel.v*dv.z };
         uv tmp = vel;
         turn(pi/2);
-        localCam.left = { vel.u*du.x + vel.v*dv.x, vel.u*du.y + vel.v*dv.y, vel.u*du.z + vel.v*dv.z };
+        localCam.left = side * (vec3){ vel.u*du.x + vel.v*dv.x, vel.u*du.y + vel.v*dv.y, vel.u*du.z + vel.v*dv.z };
         vel = tmp;
-        localCam.up = cross(localCam.front, localCam.left);
+        localCam.up = cross(localCam.front, localCam.left) * side;
         localCam.pos =
         { 
             s.x + height*localCam.up.x - 0.03*localCam.front.x,
@@ -333,6 +336,9 @@ void surf_keydown(unsigned char key)
                 flyMode = true;
                 cam = &mainCamera;
             }
+            break;
+        case '4':
+            surf.side *= -1.0f;
             break;
     }
 }
