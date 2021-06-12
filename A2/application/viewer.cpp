@@ -129,8 +129,8 @@ int start(int argc, char **argv)
     glEnable(GL_MULTISAMPLE);
     glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
     glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_DEPTH_TEST);
 
     glClearColor(0.2, 0.2, 0.8, 0);
 
