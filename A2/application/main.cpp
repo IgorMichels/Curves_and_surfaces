@@ -201,16 +201,14 @@ struct Surface
         if(dt == 0) return;
         dt *= side;
 
-        float R = sqrt(G - F*F/E);
-        float Re = sqrt(E);
+        float R = sqrt(E*G - F*F);
 
-        float a_ = (uv_vel.u + uv_vel.v*F/E)*Re;
-        float b_ = uv_vel.v*R;
+        uv_vel = 
+        {
+            uv_vel.u*cos(dt) - (uv_vel.u*F + uv_vel.v*G)/R*sin(dt),
+            (uv_vel.u*E + uv_vel.v*F)/R*sin(dt) + uv_vel.v*cos(dt)
+        };
 
-        float A = a_*cos(dt) - b_*sin(dt);
-        float B = a_*sin(dt) + b_*cos(dt);
-
-        uv_vel = {A/Re - B*F/E/R, B/R};
         calculateVel();
     }
 
@@ -387,9 +385,6 @@ int main(int argc, char ** argv)
 
     surf.sample(256);
     surf.reset();
-
-    printf("%f, %f, %f\n", surf.du.x, surf.du.y, surf.du.z);
-    printf("%f, %f, %f\n", surf.dv.x, surf.dv.y, surf.dv.z);
 
     return start(argc, argv);
 }
