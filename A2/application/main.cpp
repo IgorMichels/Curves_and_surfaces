@@ -20,13 +20,15 @@ struct Surface
     int numGrid;
     vector grid[MAX_NUM][MAX_NUM];
 
-    std::vector<vector> paths;
+    std::vector<vector> vec_paths;
+    std::vector<uv> uv_paths;
     std::vector<int> cuts;
 
     Camera localCam;
 
     float side = 1.0f;
 
+    bool vecView = true;
     bool showGrid = false;
     bool showFaces = true;
     bool showPartials = true;
@@ -74,12 +76,18 @@ struct Surface
 
     void draw()
     {
+        if(vecView) drawVec();
+        else drawUv();
+    }
+
+    void drawVec()
+    {
         if(&localCam == cam) updateCamera();
 
         //surface faces
         if(showFaces)
         {
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLES);
             for(int i = 0; i < numGrid-1; i++)
             for(int j = 0; j < numGrid-1; j++)
             {
@@ -92,7 +100,10 @@ struct Surface
                 glVertex3f(a.x, a.y, a.z);
                 glVertex3f(b.x, b.y, b.z);
                 glVertex3f(c.x, c.y, c.z);
-                glVertex3f(d.x, d.y, d.z);   
+                
+                glVertex3f(c.x, c.y, c.z);  
+                glVertex3f(d.x, d.y, d.z);
+                glVertex3f(a.x, a.y, a.z);
             }
             glEnd();
         }
@@ -168,10 +179,122 @@ struct Surface
         {
             for(int i = 1; i < cuts[c]; i++)
             {
-                if(pt+i < paths.size())
+                if(pt+i < vec_paths.size())
                 {
-                    glVertex3f(paths[pt+i-0].x, paths[pt+i-0].y, paths[pt+i-0].z);
-                    glVertex3f(paths[pt+i-1].x, paths[pt+i-1].y, paths[pt+i-1].z);
+                    glVertex3f(vec_paths[pt+i-0].x, vec_paths[pt+i-0].y, vec_paths[pt+i-0].z);
+                    glVertex3f(vec_paths[pt+i-1].x, vec_paths[pt+i-1].y, vec_paths[pt+i-1].z);
+                }
+            }
+            pt += cuts[c];
+        }
+        
+        glEnd();
+    }
+
+    void drawUv()
+    {
+        float su = (limits.x - limits.w)/(numGrid-1);
+        float sv = (limits.z - limits.y)/(numGrid-1);
+
+        //surface faces
+        if(showFaces)
+        {
+            glBegin(GL_TRIANGLES);
+            for(int i = 0; i < numGrid-1; i++)
+            for(int j = 0; j < numGrid-1; j++)
+            {
+                uv a = { limits.w + su*(i+0), limits.y + sv*(j+0) };
+                uv b = { limits.w + su*(i+1), limits.y + sv*(j+0) };
+                uv c = { limits.w + su*(i+1), limits.y + sv*(j+1) };
+                uv d = { limits.w + su*(i+0), limits.y + sv*(j+1) };
+                
+                glColor3f(1, (float)i/numGrid, (float)j/numGrid);
+                glVertex3f(a.u, a.v, 0);
+                glVertex3f(b.u, b.v, 0);
+                glVertex3f(c.u, c.v, 0);
+                
+                glVertex3f(c.u, c.v, 0);  
+                glVertex3f(d.u, d.v, 0);
+                glVertex3f(a.u, a.v, 0);
+            }
+            glEnd();
+        }
+
+        //surface grid
+        if(showGrid)
+        {
+            glLineWidth(1);
+            glBegin(GL_LINES);
+            glColor3f(0.5, 0.5, 0.5);
+            for(int i = 0; i < numGrid; i++)
+            for(int j = 0; j < numGrid; j++)
+            {
+                uv a = { limits.w + su*(i+0), limits.y + sv*(j+0) };
+
+                if(i != numGrid-1)
+                {
+                    uv b = { limits.w + su*(i+1), limits.y + sv*(j+0) };
+                    glVertex3f(a.u, a.v, 0);
+                    glVertex3f(b.u, b.v, 0);
+                }
+                if(j != numGrid-1)
+                {
+                    uv d = { limits.w + su*(i+0), limits.y + sv*(j+1) };
+                    glVertex3f(a.u, a.v, 0);
+                    glVertex3f(d.u, d.v, 0);
+                }
+            }
+            glEnd();
+        }
+
+        //2-vector base
+        if(showPartials)
+        {
+            glLineWidth(2);
+            glDisable(GL_DEPTH_TEST);
+            glBegin(GL_LINES);
+            glColor3f(1, 0, 0);
+            glVertex3f(uv_pos.u+0, uv_pos.v+0, 0.1);
+            glVertex3f(uv_pos.u+1, uv_pos.v+0, 0.1);
+            glColor3f(0, 1, 0);
+            glVertex3f(uv_pos.u+0, uv_pos.v+0, 0.1);
+            glVertex3f(uv_pos.u+0, uv_pos.v+1, 0.1);
+            glEnd();
+            glEnable(GL_DEPTH_TEST);
+        }
+
+        //vel
+        glDisable(GL_DEPTH_TEST);
+        if(showVel)
+        {
+            glLineWidth(2);
+            glBegin(GL_LINES);
+            glColor3f(1, 1, 1);
+            glVertex3f(uv_pos.u, uv_pos.v, 0.1);
+            glVertex3f(uv_pos.u + uv_vel.u, uv_pos.v + uv_vel.v, 0.1);
+            glEnd();
+        }
+        glPointSize(8);
+        glColor3f(1, 1, 0.6);
+        glBegin(GL_POINTS);
+        glVertex3f(uv_pos.u, uv_pos.v, 0.1);
+        glEnd();
+        glEnable(GL_DEPTH_TEST);
+
+        //path
+        glColor3f(0, 0, 0);
+        glLineWidth(4);
+        glBegin(GL_LINES);
+
+        int pt = 0;
+        for(int c = 0; c < cuts.size(); c++)
+        {
+            for(int i = 1; i < cuts[c]; i++)
+            {
+                if(pt+i < vec_paths.size())
+                {
+                    glVertex3f(uv_paths[pt+i-0].u, uv_paths[pt+i-0].v, 0.1);
+                    glVertex3f(uv_paths[pt+i-1].u, uv_paths[pt+i-1].v, 0.1);
                 }
             }
             pt += cuts[c];
@@ -220,7 +343,8 @@ struct Surface
         {
             if(tracePath) 
             {
-                paths.push_back(pos);
+                vec_paths.push_back(pos);
+                uv_paths.push_back(uv_pos);
                 if(cuts.size() == 0) cuts.push_back(1);
                 else cuts[cuts.size()-1]++;
             }
@@ -283,6 +407,13 @@ struct Surface
         calculatePos();
         calculateVel();
     }
+
+    void resetPaths()
+    {
+        vec_paths.clear();
+        uv_paths.clear();
+        cuts.clear();
+    }
 };
 
 Surface surf;
@@ -337,8 +468,7 @@ void surf_keydown(unsigned char key)
                 surf.sample(surf.numGrid+1);
             break;
         case '0':
-            surf.paths.clear();
-            surf.cuts.clear();
+            surf.resetPaths();
             break;
         case '1':
             surf.showVel = !surf.showVel;
@@ -363,6 +493,14 @@ void surf_keydown(unsigned char key)
             break;
         case '4':
             surf.side *= -1.0f;
+            break;
+        case '5':
+            if(surf.vecView)
+            {
+                surf.vecView = false;
+                cam = &mainCamera;
+            }
+            else surf.vecView = true;
             break;
     }
 }

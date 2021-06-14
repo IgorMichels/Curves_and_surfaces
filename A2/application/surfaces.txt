@@ -1,4 +1,5 @@
 plane: ( u, v, 0 ) [-10, 10] [-10, 10]
+disk: ( v cos u, v sin u, 0 ) [0, 2pi] [0, 10]
 sphere: (sin u cos v, sin u sin v, cos u) [0, pi] [0, 2pi]
 torus: (-(2cos u + 3)cos v, -(2cos u + 3)sin v, -2sin u) [0, 2pi] [0, 2pi]
 saddle: (u, v, u*u-v*v) [-2, 2] [-2, 2]
@@ -9,6 +10,7 @@ hiperboloid: ( cos u (sqrt(v v + 1)), sin u (sqrt(v v + 1)), v) [0, 2pi] [-3, 3]
 
 
 sphere2: ( 1/sqrt(1+u*u+v*v), u/sqrt(1+u*u+v*v), v/sqrt(1+u*u+v*v) ) [-5, 5] [-5, 5]
+disk2: ( v cos u, v sin u, v ) [0, 2pi] [0, 10]
 helix: ( (2 + sin v)cos u, (2 + sin v)sin u, u + cos v ) [-5, 5] [0, 2pi]
 bumps: ( u, v, sin u cos (v/2)) [-10, 10] [-10, 10]
 hill: ( u, v, 1/exp(u*u+v*v) ) [-4, 4] [-4, 4]
