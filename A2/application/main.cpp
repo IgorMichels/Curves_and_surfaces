@@ -5,6 +5,12 @@
 
 #define MAX_NUM 512
 
+struct vec_col
+{
+    vector point;
+    vec3 color;
+};
+
 struct Surface
 {
     Compiler comp;
@@ -18,7 +24,7 @@ struct Surface
 
     quad limits;
     int numGrid;
-    vector grid[MAX_NUM][MAX_NUM];
+    vec_col grid[MAX_NUM][MAX_NUM];
 
     std::vector<vector> vec_paths;
     std::vector<uv> uv_paths;
@@ -70,7 +76,11 @@ struct Surface
             float u = limits.w + iu*(limits.x - limits.w)/(numGrid-1);
             float v = limits.y + iv*(limits.z - limits.y)/(numGrid-1);
 
-            grid[iu][iv] = comp.surface(u, v);
+            vector du = comp.partial_u(u, v);
+            vector dv = comp.partial_v(u, v);
+            vec3 n = normalize(cross((vec3){du.x, du.y, du.z}, (vec3){dv.x, dv.y, dv.z}));
+            grid[iu][iv].point = comp.surface(u, v);
+            grid[iu][iv].color = {(n.x+1)/2, (n.y+1)/2, (n.z+1)/2};
         }
     }
 
@@ -91,19 +101,27 @@ struct Surface
             for(int i = 0; i < numGrid-1; i++)
             for(int j = 0; j < numGrid-1; j++)
             {
-                vector a = grid[i+0][j+0];
-                vector b = grid[i+1][j+0];
-                vector c = grid[i+1][j+1];
-                vector d = grid[i+0][j+1];
+                vec_col a = grid[i+0][j+0];
+                vec_col b = grid[i+1][j+0];
+                vec_col c = grid[i+1][j+1];
+                vec_col d = grid[i+0][j+1];
                 
-                glColor3f(1, (float)i/numGrid, (float)j/numGrid);
-                glVertex3f(a.x, a.y, a.z);
-                glVertex3f(b.x, b.y, b.z);
-                glVertex3f(c.x, c.y, c.z);
-                
-                glVertex3f(c.x, c.y, c.z);  
-                glVertex3f(d.x, d.y, d.z);
-                glVertex3f(a.x, a.y, a.z);
+                glColor3f (a.color.x, a.color.y, a.color.z);
+                glVertex3f(a.point.x, a.point.y, a.point.z);
+
+                glColor3f (b.color.x, b.color.y, b.color.z);
+                glVertex3f(b.point.x, b.point.y, b.point.z);
+
+                glColor3f (c.color.x, c.color.y, c.color.z);
+                glVertex3f(c.point.x, c.point.y, c.point.z);
+
+                glVertex3f(c.point.x, c.point.y, c.point.z);
+
+                glColor3f (d.color.x, d.color.y, d.color.z);
+                glVertex3f(d.point.x, d.point.y, d.point.z);
+
+                glColor3f (a.color.x, a.color.y, a.color.z);
+                glVertex3f(a.point.x, a.point.y, a.point.z);
             }
             glEnd();
         }
@@ -117,19 +135,19 @@ struct Surface
             for(int i = 0; i < numGrid; i++)
             for(int j = 0; j < numGrid; j++)
             {
-                vector a = grid[i+0][j+0];
+                vec_col a = grid[i+0][j+0];
 
                 if(i != numGrid-1)
                 {
-                    vector b = grid[i+1][j+0];
-                    glVertex3f(a.x, a.y, a.z);
-                    glVertex3f(b.x, b.y, b.z);
+                    vec_col b = grid[i+1][j+0];
+                    glVertex3f(a.point.x, a.point.y, a.point.z);
+                    glVertex3f(b.point.x, b.point.y, b.point.z);
                 }
                 if(j != numGrid-1)
                 {
-                    vector d = grid[i+0][j+1];
-                    glVertex3f(a.x, a.y, a.z);
-                    glVertex3f(d.x, d.y, d.z);
+                    vec_col d = grid[i+0][j+1];
+                    glVertex3f(a.point.x, a.point.y, a.point.z);
+                    glVertex3f(d.point.x, d.point.y, d.point.z);
                 }
             }
             glEnd();
