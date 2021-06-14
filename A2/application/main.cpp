@@ -26,7 +26,7 @@ struct Surface
     int numGrid;
     vec_col grid[MAX_NUM][MAX_NUM];
 
-    std::vector<vector> vec_paths;
+    std::vector<vec_col> vec_paths;
     std::vector<uv> uv_paths;
     std::vector<int> cuts;
 
@@ -188,7 +188,6 @@ struct Surface
         glEnable(GL_DEPTH_TEST);
 
         //path
-        glColor3f(0, 0, 0);
         glLineWidth(4);
         glBegin(GL_LINES);
 
@@ -199,8 +198,15 @@ struct Surface
             {
                 if(pt+i < vec_paths.size())
                 {
-                    glVertex3f(vec_paths[pt+i-0].x, vec_paths[pt+i-0].y, vec_paths[pt+i-0].z);
-                    glVertex3f(vec_paths[pt+i-1].x, vec_paths[pt+i-1].y, vec_paths[pt+i-1].z);
+                    vec_col a = vec_paths[pt+i-0];
+                    vec_col b = vec_paths[pt+i-1]; 
+
+                    glColor3f(a.color.x, a.color.y, a.color.z);
+                    glVertex3f(a.point.x, a.point.y, a.point.z);
+
+                    glColor3f(b.color.x, b.color.y, b.color.z);
+                    glVertex3f(b.point.x, b.point.y, b.point.z);
+        
                 }
             }
             pt += cuts[c];
@@ -361,7 +367,8 @@ struct Surface
         {
             if(tracePath) 
             {
-                vec_paths.push_back(pos);
+                vec3 color = (vec3){(vel.x+1)/2, (vel.y+1)/2, (vel.z+1)/2};
+                vec_paths.push_back({pos, color});
                 uv_paths.push_back(uv_pos);
                 if(cuts.size() == 0) cuts.push_back(1);
                 else cuts[cuts.size()-1]++;
