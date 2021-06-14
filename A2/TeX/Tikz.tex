@@ -1,0 +1,25 @@
+\documentclass[tikz, border = 3mm]{standalone}
+\usetikzlibrary{3dtools}
+\begin{document}
+    \begin{tikzpicture}[3d/install view = {phi = 120, theta = 70},
+                        line cap = butt,
+                        line join = round,
+                        declare function = {R = 5;},
+                        c/.style = {circle, fill, inner sep = 1pt}] 
+    \path[overlay]
+        (0, 0, -0.58256636122*R) coordinate (A)
+        (0, 0, 0.075) coordinate (aux)
+        (0.269048*R, -0.766961*R, -0.582566*R) coordinate (Santiago)
+        (-0.665493*R, 0.466622*R, -0.582566*R)  coordinate (Melbourne)
+        (0, 0, 0)  coordinate (O);
+        \draw[3d/screen coords] (O) circle[radius = R];
+        \path[overlay, 3d/plane with normal = {(0, 0, 1) through (A) named p}];
+        \path[overlay, 3d/plane with normal = {(-0.718644, -0.544432, 0.3884863) through (aux) named q}];
+        \path[3d/project = {(O) on p}] coordinate (T);
+        \path[3d/project = {(O) on q}] coordinate (U);
+    \pic{3d/circle on sphere = {R = R, C = {(O)}, P = {(T)}}};
+    \pic{3d/circle on sphere = {R = R, C = {(O)}, P = {(U)}}};
+    \path foreach \p/\g in {O/-90, Santiago/-90, Melbourne/-90}
+        {(\p)node[c]{} + (\g:2.5mm) node{$\p$}};
+\end{tikzpicture}
+\end{document}  
