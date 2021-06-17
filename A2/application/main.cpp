@@ -131,7 +131,7 @@ struct Surface
         {
             glLineWidth(1);
             glBegin(GL_LINES);
-            glColor3f(0.5, 0.5, 0.5);
+            glColor3f(0, 0, 0);
             for(int i = 0; i < numGrid; i++)
             for(int j = 0; j < numGrid; j++)
             {
@@ -249,7 +249,7 @@ struct Surface
         {
             glLineWidth(1);
             glBegin(GL_LINES);
-            glColor3f(0.5, 0.5, 0.5);
+            glColor3f(0, 0, 0);
             for(int i = 0; i < numGrid; i++)
             for(int j = 0; j < numGrid; j++)
             {
