@@ -132,7 +132,7 @@ int start(int argc, char **argv)
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_DEPTH_TEST);
 
-    glClearColor(0.5, 0.5, 1, 0);
+    glClearColor(0.7, 0.7, 1, 0);
 
     updateCamera();
 
